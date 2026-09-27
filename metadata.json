@@ -1,0 +1,6 @@
+{
+  "name": "St. Mariam Thresia Church Parish System",
+  "description": "Comprehensive Parish Management System and official digital portal for St. Mariam Thresia Church, Syro-Malabar Catholic Church.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
