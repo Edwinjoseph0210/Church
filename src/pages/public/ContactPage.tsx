@@ -199,57 +199,92 @@ export const ContactPage: React.FC<ContactPageProps> = () => {
               </div>
 
               {/* Parish Priest / Vicar */}
-              <div className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-amber-50/80 border border-amber-200">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-full bg-amber-900 text-amber-100 flex items-center justify-center shrink-0">
-                    <Church className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-amber-900 tracking-wider block">
-                      Parish Priest / Vicar
-                    </span>
-                    <span className="font-serif font-bold text-stone-900 block truncate">
-                      {parishPriest}
-                    </span>
-                    <a
-                      href="tel:+919742162172"
-                      className="text-amber-900 hover:text-amber-950 font-medium hover:underline text-xs block"
-                    >
-                      +91 97421 62172
-                    </a>
-                  </div>
+              <div className="flex items-center gap-3 p-3.5 rounded-xl bg-amber-50/80 border border-amber-200">
+                <div className="w-9 h-9 rounded-full bg-amber-900 text-amber-100 flex items-center justify-center shrink-0">
+                  <Church className="w-4 h-4" />
                 </div>
-
-                <a
-                  href="tel:+919742162172"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-900 hover:bg-amber-950 text-white font-semibold rounded-lg shadow-xs transition-colors shrink-0 text-xs"
-                >
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>Call Priest</span>
-                </a>
+                <div className="min-w-0">
+                  <span className="text-[10px] uppercase font-bold text-amber-900 tracking-wider block">
+                    Parish Priest / Vicar
+                  </span>
+                  <span className="font-serif font-bold text-stone-900 block truncate">
+                    {parishPriest}
+                  </span>
+                  <span className="text-xs text-stone-600 block">
+                    Parish Administrator & Pastor
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-stone-50 border border-stone-200/70">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Phone className="w-5 h-5 text-amber-900 shrink-0" />
-                  <div className="min-w-0">
-                    <span className="font-semibold block text-stone-900">Parish Office Phone</span>
-                    <a
-                      href={`tel:${phone.replace(/\s+/g, '')}`}
-                      className="text-amber-900 hover:text-amber-950 font-medium hover:underline block break-all"
-                    >
-                      {phone}
-                    </a>
+              {/* Clergy / Monsignor */}
+              <div className="flex items-center gap-3 p-3.5 rounded-xl bg-stone-50 border border-stone-200">
+                <div className="w-9 h-9 rounded-full bg-stone-800 text-stone-200 flex items-center justify-center shrink-0">
+                  <Church className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[10px] uppercase font-bold text-stone-600 tracking-wider block">
+                    Clergy / Monsignor
+                  </span>
+                  <span className="font-serif font-bold text-stone-900 block truncate">
+                    Msgr. Varghese Pereppadan
+                  </span>
+                  <span className="text-xs text-stone-600 block">
+                    Pastoral Care & Sacraments
+                  </span>
+                </div>
+              </div>
+
+              {/* Two Phone Numbers: 1. Church Phone Number, 2. Priest Phone Number */}
+              <div className="p-4 rounded-xl bg-amber-50/50 border border-amber-200/80 space-y-3">
+                <span className="text-[10px] uppercase font-bold text-amber-900 tracking-wider block">
+                  Official Contact Phone Numbers
+                </span>
+
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <Phone className="w-4 h-4 text-amber-900 shrink-0" />
+                    <div>
+                      <span className="text-[11px] font-semibold text-stone-700 block">
+                        1. Church Phone Number
+                      </span>
+                      <a
+                        href="tel:+919742162172"
+                        className="text-xs font-bold text-amber-950 hover:underline"
+                      >
+                        +91 97421 62172
+                      </a>
+                    </div>
                   </div>
+                  <a
+                    href="tel:+919742162172"
+                    className="px-3 py-1.5 bg-amber-900 hover:bg-amber-950 text-white font-semibold rounded-lg shadow-2xs transition-colors shrink-0 text-xs"
+                  >
+                    Call Church
+                  </a>
                 </div>
 
-                <a
-                  href={`tel:${phone.replace(/\s+/g, '')}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-900 text-white font-semibold rounded-lg shadow-xs transition-colors shrink-0 text-xs"
-                >
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>Call Office</span>
-                </a>
+                <div className="flex items-center justify-between gap-3 pt-2 border-t border-amber-200/60">
+                  <div className="flex items-center gap-2.5">
+                    <Phone className="w-4 h-4 text-amber-900 shrink-0" />
+                    <div>
+                      <span className="text-[11px] font-semibold text-stone-700 block">
+                        2. Priest Phone Number
+                      </span>
+                      <a
+                        href="tel:+919742162172"
+                        className="text-xs font-bold text-amber-950 hover:underline"
+                      >
+                        +91 97421 62172
+                      </a>
+                    </div>
+                  </div>
+                  <a
+                    href="tel:+919742162172"
+                    className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-amber-300 font-semibold rounded-lg shadow-2xs transition-colors shrink-0 text-xs"
+                  >
+                    Call Priest
+                  </a>
+                </div>
               </div>
 
               <div className="flex items-center gap-3 p-3.5 rounded-xl bg-stone-50 border border-stone-200/70">

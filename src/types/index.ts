@@ -207,15 +207,38 @@ export interface ParishDocument {
   id: string;
   title: string;
   description: string;
-  category: 'PARISH_NOTICE' | 'FORM' | 'CATECHISM' | 'MEETING_MINUTES' | 'SACRAMENTAL_GUIDE' | 'FINANCIAL';
+  category:
+    | 'PARISH_NOTICE'
+    | 'FORM'
+    | 'CATECHISM'
+    | 'MEETING_MINUTES'
+    | 'SACRAMENTAL_GUIDE'
+    | 'FINANCIAL'
+    | 'BAPTISM_CERTIFICATE'
+    | 'MARRIAGE_CERTIFICATE'
+    | 'FIRST_COMMUNION'
+    | 'CONFIRMATION_CERTIFICATE'
+    | 'FAMILY_RECORD'
+    | 'PARISH_TRANSFER_LETTER'
+    | 'ID_PROOF'
+    | 'MEMBER_SUBMISSION'
+    | string;
   fileName: string;
   fileSize: string;
   fileUrl: string;
   fileContent?: string; // base64 or stored text for secure downloads
+  fileData?: string; // base64 data for uploaded document preview
   uploadedBy: string;
   uploadDate: string;
   visibility: 'PUBLIC' | 'MEMBERS_ONLY' | 'ADMIN_ONLY' | 'ORGANIZATION_ONLY';
   organizationId?: string;
+  memberId?: string;
+  memberName?: string;
+  notes?: string;
+  verificationStatus?: 'PENDING_VERIFICATION' | 'VERIFIED' | 'REJECTED';
+  verificationNotes?: string;
+  verifiedAt?: string;
+  verifiedBy?: string;
   status: 'ACTIVE' | 'ARCHIVED';
 }
 

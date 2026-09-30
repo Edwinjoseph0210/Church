@@ -52,7 +52,7 @@ const defaultSettings: ParishSettings = {
   tradition: 'Syro-Malabar Catholic Church',
   diocese: 'Diocese of Hosur',
   parishPriest: 'Fr. Joshy N George',
-  assistantPriests: '[ASSISTANT PRIEST NAME]',
+  assistantPriests: 'Msgr. Varghese Pereppadan',
   address: '9, 1E, GST Road, J C K Nagar, Chengalpattu, Tamil Nadu 603002',
   phone: '+91 97421 62172',
   email: 'stmariamthresiaparish@gmail.com',
@@ -64,7 +64,7 @@ const defaultSettings: ParishSettings = {
     instagram: 'https://instagram.com',
   },
   heroTagline: 'United in Faith. Growing in Love. Serving Together.',
-  heroImageUrl: '/src/assets/images/hero_church_facade_1790490137085.jpg',
+  heroImageUrl: '/src/assets/images/holy_qurbana_altar_1790490159004.jpg',
   altarImageUrl: '/src/assets/images/holy_qurbana_altar_1790490159004.jpg',
   communityImageUrl: '/src/assets/images/parish_community_gathering_1790490173737.jpg',
   aboutHistory: '[PARISH HISTORY TO BE ADDED]',
@@ -333,135 +333,39 @@ function getInitialDatabase(): DatabaseSchema {
     {
       id: 'HQ-1',
       dayType: 'SUNDAY',
-      dayName: 'Sunday Morning',
-      time: '[HOLY QURBANA TIMINGS]',
-      language: 'Malayalam & English (Solemn Syro-Malabar Qurbana)',
-      description: 'Solemn Sunday Qurbana preceded by Morning Prayer (Sapra)',
-      notes: 'Catechism classes precede the Holy Qurbana',
+      dayName: 'Sunday Holy Qurbana',
+      time: '8:00 AM',
+      language: 'Malayalam & English (Syro-Malabar)',
+      description: 'Solemn Sunday Holy Qurbana preceded by Morning Prayer (Sapra)',
+      notes: 'Catechism classes and choir fellowship follow the Holy Qurbana',
       isActive: true,
       displayOrder: 1,
     },
     {
       id: 'HQ-2',
-      dayType: 'SUNDAY',
-      dayName: 'Sunday Evening',
-      time: '[HOLY QURBANA TIMINGS]',
-      language: 'English',
-      description: 'Youth and Family Holy Qurbana',
-      notes: 'Rosary and Novena to St. Mariam Thresia follow',
+      dayType: 'WEEKDAY',
+      dayName: 'Monday to Thursday',
+      time: '6:00 AM',
+      language: 'Malayalam',
+      description: 'Daily Morning Holy Qurbana & Sapra',
+      notes: 'Adoration in the Blessed Sacrament Chapel',
       isActive: true,
       displayOrder: 2,
     },
     {
       id: 'HQ-3',
       dayType: 'WEEKDAY',
-      dayName: 'Monday to Thursday',
-      time: '[HOLY QURBANA TIMINGS]',
+      dayName: 'Friday and Saturday',
+      time: 'Evening 8:00 PM',
       language: 'Malayalam',
-      description: 'Daily Morning Holy Qurbana',
-      notes: 'Adoration in the Blessed Sacrament Chapel',
+      description: 'Evening Holy Qurbana, Sacred Heart Devotion & Novena',
+      notes: 'Friday Eucharistic Adoration and Saturday Novena of Our Lady of Perpetual Help',
       isActive: true,
       displayOrder: 3,
     },
-    {
-      id: 'HQ-4',
-      dayType: 'WEEKDAY',
-      dayName: 'Friday (First Friday Devotion)',
-      time: '[HOLY QURBANA TIMINGS]',
-      language: 'Malayalam',
-      description: 'Sacred Heart Devotion, Holy Qurbana, and Eucharistic Adoration',
-      notes: 'Confessions available before celebration',
-      isActive: true,
-      displayOrder: 4,
-    },
-    {
-      id: 'HQ-5',
-      dayType: 'WEEKDAY',
-      dayName: 'Saturday',
-      time: '[HOLY QURBANA TIMINGS]',
-      language: 'Malayalam',
-      description: 'Memorial Holy Qurbana & Novena of Our Lady of Perpetual Help',
-      notes: 'Special prayers for families and sick parishioners',
-      isActive: true,
-      displayOrder: 5,
-    },
-    {
-      id: 'HQ-6',
-      dayType: 'FEAST',
-      dayName: 'Parish Titular Feast of St. Mariam Thresia',
-      time: '[HOLY QURBANA TIMINGS]',
-      language: 'Solemn Raza (Syro-Malabar)',
-      description: 'Main Feast Day Raza celebrated by Diocesan Prelate & Clergy',
-      notes: 'Followed by Procession (Rassa) and fellowship meal',
-      isActive: true,
-      displayOrder: 6,
-    },
   ];
 
-  const announcements: Announcement[] = [
-    {
-      id: 'ANN-1',
-      title: 'Annual Parish Feast of St. Mariam Thresia Preparations',
-      content:
-        'Preparations for the solemn feast of our patroness St. Mariam Thresia have officially begun. All family unit leaders and parish organization coordinators are requested to attend the general coordination meeting this Sunday following the morning Holy Qurbana.',
-      category: 'FEAST',
-      priority: 'HIGH',
-      isImportant: true,
-      publishDate: '2026-09-20',
-      expiryDate: '2026-10-31',
-      author: 'Fr. Joshy N George',
-      audience: 'PUBLIC',
-      status: 'PUBLISHED',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'ANN-2',
-      title: 'Catechism Academic Year Registration Now Open',
-      content:
-        'Registration for all children from Grade 1 through Grade 12 for the upcoming Catechism year is now open. Parents can download the enrollment form from the Member Portal Documents tab or register directly with the Catechism department.',
-      category: 'CATECHISM',
-      priority: 'NORMAL',
-      isImportant: false,
-      publishDate: '2026-09-18',
-      expiryDate: '2026-10-15',
-      author: 'Director of Catechesis',
-      audience: 'PUBLIC',
-      status: 'PUBLISHED',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'ANN-3',
-      title: 'Family Unit Prayer Meetings Schedule',
-      content:
-        'The monthly family unit prayer gatherings for all wards are scheduled for this Friday evening. Please contact your ward coordinator for the host family address and timing.',
-      category: 'LITURGY',
-      priority: 'NORMAL',
-      isImportant: false,
-      publishDate: '2026-09-22',
-      author: 'Family Commission',
-      audience: 'MEMBERS',
-      status: 'PUBLISHED',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'ANN-4',
-      title: 'Parish Financial Committee Quarterly Briefing',
-      content:
-        'The third-quarter financial summary and church maintenance report is available for parish members to inspect in the documents archive.',
-      category: 'GENERAL',
-      priority: 'NORMAL',
-      isImportant: false,
-      publishDate: '2026-09-25',
-      author: 'Parish Finance Council',
-      audience: 'MEMBERS',
-      status: 'PUBLISHED',
-      createdAt: now,
-      updatedAt: now,
-    },
-  ];
+  const announcements: Announcement[] = [];
 
   const events: ParishEvent[] = [
     {
@@ -903,6 +807,10 @@ class ParishDatabase {
             parsed.parish_settings.parishPriest = 'Fr. Joshy N George';
             needsSave = true;
           }
+          if (!parsed.parish_settings.assistantPriests || parsed.parish_settings.assistantPriests === '[ASSISTANT PRIEST NAME]') {
+            parsed.parish_settings.assistantPriests = 'Msgr. Varghese Pereppadan';
+            needsSave = true;
+          }
           if (!parsed.parish_settings.phone || parsed.parish_settings.phone === '+91 88071 88445') {
             parsed.parish_settings.phone = '+91 97421 62172';
             needsSave = true;
@@ -1037,6 +945,14 @@ class ParishDatabase {
               needsSave = true;
             }
           });
+        }
+
+        if (parsed.holy_qurbana_timings) {
+          const hasPlaceholder = parsed.holy_qurbana_timings.some((t: any) => t.time && t.time.includes('[HOLY QURBANA TIMINGS]'));
+          if (hasPlaceholder || parsed.holy_qurbana_timings.length > 3) {
+            parsed.holy_qurbana_timings = initial.holy_qurbana_timings;
+            needsSave = true;
+          }
         }
 
         if (needsSave) {

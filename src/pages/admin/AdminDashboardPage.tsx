@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { apiRequest } from '../../services/api';
-import { Member, Family, Announcement, ParishEvent, AuditLog, AppointmentRequest, Organization } from '../../types';
+import { Member, Family, Announcement, ParishEvent, AuditLog, HolyQurbanaTiming, Organization } from '../../types';
 import {
   Users,
   Home,
   Megaphone,
   Calendar,
-  CalendarCheck,
+  Clock,
+  FileText,
   Bookmark,
   Plus,
   ArrowRight,
@@ -26,20 +27,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [events, setEvents] = useState<ParishEvent[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [appointments, setAppointments] = useState<AppointmentRequest[]>([]);
+  const [qurbanaTimings, setQurbanaTimings] = useState<HolyQurbanaTiming[]>([]);
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStats() {
       try {
-        const [mRes, fRes, aRes, eRes, oRes, aptRes, lRes] = await Promise.all([
+        const [mRes, fRes, aRes, eRes, oRes, qRes, lRes] = await Promise.all([
           apiRequest<Member[]>('/members').catch(() => []),
           apiRequest<Family[]>('/families').catch(() => []),
           apiRequest<Announcement[]>('/announcements').catch(() => []),
           apiRequest<ParishEvent[]>('/events').catch(() => []),
           apiRequest<Organization[]>('/organizations').catch(() => []),
-          apiRequest<AppointmentRequest[]>('/appointments').catch(() => []),
+          apiRequest<HolyQurbanaTiming[]>('/holy-qurbana/all').catch(() => []),
           apiRequest<AuditLog[]>('/audit-logs').catch(() => []),
         ]);
         setMembers(mRes);
@@ -47,7 +48,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate
         setAnnouncements(aRes);
         setEvents(eRes);
         setOrganizations(oRes);
-        setAppointments(aptRes);
+        setQurbanaTimings(qRes);
         setLogs(lRes.slice(0, 6));
       } catch (err) {
         console.error('Failed to load admin metrics:', err);
@@ -59,7 +60,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate
   }, []);
 
   const activeMembers = members.filter((m) => m.membershipStatus === 'ACTIVE').length;
-  const pendingAppointments = appointments.filter((a) => a.status === 'PENDING').length;
+  const activeQurbanaCount = qurbanaTimings.filter((t) => t.isActive).length;
 
   return (
     <div className="space-y-8">
@@ -145,14 +146,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate
 
         <div className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs">
           <div className="flex items-center justify-between text-stone-400 mb-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Appointments</span>
-            <CalendarCheck className="w-4 h-4 text-amber-900" />
+            <span className="text-[10px] uppercase font-bold tracking-wider">Holy Qurbana</span>
+            <Clock className="w-4 h-4 text-amber-900" />
           </div>
           <div className="text-2xl font-bold text-stone-900 font-mono">
-            {loading ? '...' : appointments.length}
+            {loading ? '...' : qurbanaTimings.length}
           </div>
           <span className="text-[10px] text-amber-800 font-semibold">
-            {pendingAppointments} Pending
+            {activeQurbanaCount} Active Celebrations
           </span>
         </div>
       </div>
@@ -164,100 +165,114 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate
         </h2>
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={() => navigate('/admin/members')}
+            onClick={() => navigate('/admin/holy-qurbana')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-900 hover:bg-amber-950 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>+ Add Qurbana Timing</span>
+          </button>
+          <button
+            onClick={() => navigate('/admin/documents')}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Review Member Uploads</span>
+          </button>
+          <button
+            onClick={() => navigate('/admin/members')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Member</span>
           </button>
           <button
             onClick={() => navigate('/admin/families')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Family</span>
           </button>
           <button
             onClick={() => navigate('/admin/announcements')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-900 hover:bg-amber-950 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Publish Announcement</span>
           </button>
           <button
             onClick={() => navigate('/admin/events')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Create Event</span>
           </button>
-          <button
-            onClick={() => navigate('/admin/gallery')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Upload Photos</span>
-          </button>
-          <button
-            onClick={() => navigate('/admin/documents')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Upload Document</span>
-          </button>
         </div>
       </div>
 
-      {/* Two Column Grid: Pending Appointments & Activity Log */}
+      {/* Two Column Grid: Holy Qurbana Schedules & Activity Log */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Appointments Requiring Review */}
+        {/* Holy Qurbana Timings */}
         <div className="bg-white rounded-2xl p-6 border border-stone-200/90 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-stone-100">
-            <h2 className="font-serif text-lg font-bold text-stone-900">
-              Pastoral Appointments Awaiting Action
-            </h2>
+            <div>
+              <h2 className="font-serif text-lg font-bold text-stone-900">
+                Holy Qurbana Timings
+              </h2>
+              <p className="text-[11px] text-stone-500 font-editorial">
+                Scheduled liturgical services
+              </p>
+            </div>
             <button
-              onClick={() => navigate('/admin/appointments')}
+              onClick={() => navigate('/admin/holy-qurbana')}
               className="text-xs text-amber-900 font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
-              <span>Manage All</span>
+              <span>Manage & Add</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {appointments.length === 0 ? (
+          {qurbanaTimings.length === 0 ? (
             <div className="p-8 text-center text-xs text-stone-500">
-              No appointments pending.
+              No liturgical schedules defined yet. Click below to add your first Holy Qurbana timing.
             </div>
           ) : (
             <div className="space-y-3">
-              {appointments.slice(0, 4).map((apt) => (
+              {qurbanaTimings.slice(0, 4).map((timing) => (
                 <div
-                  key={apt.id}
-                  onClick={() => navigate('/admin/appointments')}
+                  key={timing.id}
+                  onClick={() => navigate('/admin/holy-qurbana')}
                   className="p-3.5 rounded-xl bg-stone-50 hover:bg-stone-100/70 border border-stone-200/70 transition-colors cursor-pointer flex items-center justify-between"
                 >
                   <div>
                     <div className="flex items-center gap-2 text-xs mb-0.5">
-                      <strong className="text-stone-900">{apt.memberName}</strong>
+                      <strong className="text-stone-900">{timing.dayName}</strong>
                       <span className="text-stone-400">·</span>
                       <span className="text-amber-900 font-medium">
-                        {apt.reason.replace('_', ' ')}
+                        {timing.language}
                       </span>
                     </div>
                     <p className="text-[11px] text-stone-500 font-mono">
-                      {apt.preferredDate} at {apt.preferredTime}
+                      {timing.time} {timing.notes ? `(${timing.notes})` : ''}
                     </p>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                    apt.status === 'PENDING' ? 'bg-amber-100 text-amber-800' : 'bg-stone-200 text-stone-700'
+                    timing.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-700'
                   }`}>
-                    {apt.status}
+                    {timing.isActive ? 'Published' : 'Hidden'}
                   </span>
                 </div>
               ))}
             </div>
           )}
+
+          <div className="pt-2">
+            <button
+              onClick={() => navigate('/admin/holy-qurbana')}
+              className="w-full py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer text-center"
+            >
+              + Add / Edit Liturgy Timings
+            </button>
+          </div>
         </div>
 
         {/* Recent Audit / Activity Logs */}

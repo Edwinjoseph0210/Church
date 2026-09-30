@@ -23,7 +23,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, navigate }) => {
     { label: 'Announcements', path: '/announcements' },
     { label: 'Events', path: '/events' },
     { label: 'Gallery', path: '/gallery' },
-    { label: 'Organizations', path: '/organizations' },
     { label: 'Contact', path: '/contact' },
   ];
 

@@ -8,7 +8,7 @@
       "status": "APPROVED",
       "passwordHash": "$2b$10$lF038p0q4CdQPFzus1F8KetyxHYg5LytxM05.LuhGndVB0AJ9uBOW",
       "createdAt": "2026-09-27T06:33:43.427Z",
-      "lastLoginAt": "2026-09-27T06:57:29.315Z",
+      "lastLoginAt": "2026-09-29T13:11:34.356Z",
       "phone": "+91 97421 62172"
     },
     {
@@ -53,7 +53,7 @@
       "status": "APPROVED",
       "passwordHash": "$2b$10$lF038p0q4CdQPFzus1F8KemuZVD6mX550rUm/.xbVT26pp/a8zJHW",
       "createdAt": "2026-09-27T06:33:43.427Z",
-      "lastLoginAt": "2026-09-27T07:01:47.730Z"
+      "lastLoginAt": "2026-09-29T13:11:45.647Z"
     },
     {
       "id": "USR-MEMBER-2",
@@ -64,7 +64,8 @@
       "role": "MEMBER",
       "status": "APPROVED",
       "passwordHash": "$2b$10$lF038p0q4CdQPFzus1F8KemuZVD6mX550rUm/.xbVT26pp/a8zJHW",
-      "createdAt": "2026-09-27T06:33:43.427Z"
+      "createdAt": "2026-09-27T06:33:43.427Z",
+      "lastLoginAt": "2026-09-29T13:12:03.979Z"
     },
     {
       "id": "USR-MEMBER-OTHER",
@@ -303,130 +304,38 @@
     {
       "id": "HQ-1",
       "dayType": "SUNDAY",
-      "dayName": "Sunday Morning",
-      "time": "[HOLY QURBANA TIMINGS]",
-      "language": "Malayalam & English (Solemn Syro-Malabar Qurbana)",
-      "description": "Solemn Sunday Qurbana preceded by Morning Prayer (Sapra)",
-      "notes": "Catechism classes precede the Holy Qurbana",
+      "dayName": "Sunday Holy Qurbana",
+      "time": "8:00 AM",
+      "language": "Malayalam & English (Syro-Malabar)",
+      "description": "Solemn Sunday Holy Qurbana preceded by Morning Prayer (Sapra)",
+      "notes": "Catechism classes and choir fellowship follow the Holy Qurbana",
       "isActive": true,
       "displayOrder": 1
     },
     {
       "id": "HQ-2",
-      "dayType": "SUNDAY",
-      "dayName": "Sunday Evening",
-      "time": "[HOLY QURBANA TIMINGS]",
-      "language": "English",
-      "description": "Youth and Family Holy Qurbana",
-      "notes": "Rosary and Novena to St. Mariam Thresia follow",
+      "dayType": "WEEKDAY",
+      "dayName": "Monday to Thursday",
+      "time": "6:00 AM",
+      "language": "Malayalam",
+      "description": "Daily Morning Holy Qurbana & Sapra",
+      "notes": "Adoration in the Blessed Sacrament Chapel",
       "isActive": true,
       "displayOrder": 2
     },
     {
       "id": "HQ-3",
       "dayType": "WEEKDAY",
-      "dayName": "Monday to Thursday",
-      "time": "[HOLY QURBANA TIMINGS]",
+      "dayName": "Friday and Saturday",
+      "time": "Evening 8:00 PM",
       "language": "Malayalam",
-      "description": "Daily Morning Holy Qurbana",
-      "notes": "Adoration in the Blessed Sacrament Chapel",
+      "description": "Evening Holy Qurbana, Sacred Heart Devotion & Novena",
+      "notes": "Friday Eucharistic Adoration and Saturday Novena of Our Lady of Perpetual Help",
       "isActive": true,
       "displayOrder": 3
-    },
-    {
-      "id": "HQ-4",
-      "dayType": "WEEKDAY",
-      "dayName": "Friday (First Friday Devotion)",
-      "time": "[HOLY QURBANA TIMINGS]",
-      "language": "Malayalam",
-      "description": "Sacred Heart Devotion, Holy Qurbana, and Eucharistic Adoration",
-      "notes": "Confessions available before celebration",
-      "isActive": true,
-      "displayOrder": 4
-    },
-    {
-      "id": "HQ-5",
-      "dayType": "WEEKDAY",
-      "dayName": "Saturday",
-      "time": "[HOLY QURBANA TIMINGS]",
-      "language": "Malayalam",
-      "description": "Memorial Holy Qurbana & Novena of Our Lady of Perpetual Help",
-      "notes": "Special prayers for families and sick parishioners",
-      "isActive": true,
-      "displayOrder": 5
-    },
-    {
-      "id": "HQ-6",
-      "dayType": "FEAST",
-      "dayName": "Parish Titular Feast of St. Mariam Thresia",
-      "time": "[HOLY QURBANA TIMINGS]",
-      "language": "Solemn Raza (Syro-Malabar)",
-      "description": "Main Feast Day Raza celebrated by Diocesan Prelate & Clergy",
-      "notes": "Followed by Procession (Rassa) and fellowship meal",
-      "isActive": true,
-      "displayOrder": 6
     }
   ],
-  "announcements": [
-    {
-      "id": "ANN-1",
-      "title": "Annual Parish Feast of St. Mariam Thresia Preparations",
-      "content": "Preparations for the solemn feast of our patroness St. Mariam Thresia have officially begun. All family unit leaders and parish organization coordinators are requested to attend the general coordination meeting this Sunday following the morning Holy Qurbana.",
-      "category": "FEAST",
-      "priority": "HIGH",
-      "isImportant": true,
-      "publishDate": "2026-09-20",
-      "expiryDate": "2026-10-31",
-      "author": "Fr. Joshy N George",
-      "audience": "PUBLIC",
-      "status": "PUBLISHED",
-      "createdAt": "2026-09-27T06:33:43.427Z",
-      "updatedAt": "2026-09-27T06:33:43.427Z"
-    },
-    {
-      "id": "ANN-2",
-      "title": "Catechism Academic Year Registration Now Open",
-      "content": "Registration for all children from Grade 1 through Grade 12 for the upcoming Catechism year is now open. Parents can download the enrollment form from the Member Portal Documents tab or register directly with the Catechism department.",
-      "category": "CATECHISM",
-      "priority": "NORMAL",
-      "isImportant": false,
-      "publishDate": "2026-09-18",
-      "expiryDate": "2026-10-15",
-      "author": "Director of Catechesis",
-      "audience": "PUBLIC",
-      "status": "PUBLISHED",
-      "createdAt": "2026-09-27T06:33:43.427Z",
-      "updatedAt": "2026-09-27T06:33:43.427Z"
-    },
-    {
-      "id": "ANN-3",
-      "title": "Family Unit Prayer Meetings Schedule",
-      "content": "The monthly family unit prayer gatherings for all wards are scheduled for this Friday evening. Please contact your ward coordinator for the host family address and timing.",
-      "category": "LITURGY",
-      "priority": "NORMAL",
-      "isImportant": false,
-      "publishDate": "2026-09-22",
-      "author": "Family Commission",
-      "audience": "MEMBERS",
-      "status": "PUBLISHED",
-      "createdAt": "2026-09-27T06:33:43.427Z",
-      "updatedAt": "2026-09-27T06:33:43.427Z"
-    },
-    {
-      "id": "ANN-4",
-      "title": "Parish Financial Committee Quarterly Briefing",
-      "content": "The third-quarter financial summary and church maintenance report is available for parish members to inspect in the documents archive.",
-      "category": "GENERAL",
-      "priority": "NORMAL",
-      "isImportant": false,
-      "publishDate": "2026-09-25",
-      "author": "Parish Finance Council",
-      "audience": "MEMBERS",
-      "status": "PUBLISHED",
-      "createdAt": "2026-09-27T06:33:43.427Z",
-      "updatedAt": "2026-09-27T06:33:43.427Z"
-    }
-  ],
+  "announcements": [],
   "events": [
     {
       "id": "EVT-1",
@@ -791,6 +700,36 @@
   ],
   "audit_logs": [
     {
+      "id": "AUD-1790687523980-926",
+      "userId": "USR-MEMBER-2",
+      "userName": "Mary Demo",
+      "userRole": "MEMBER",
+      "action": "USER_LOGIN",
+      "resource": "AUTH",
+      "details": "User logged in from identifier: member2",
+      "timestamp": "2026-09-29T13:12:03.980Z"
+    },
+    {
+      "id": "AUD-1790687505647-399",
+      "userId": "USR-MEMBER-1",
+      "userName": "John Demo",
+      "userRole": "MEMBER",
+      "action": "USER_LOGIN",
+      "resource": "AUTH",
+      "details": "User logged in from identifier: member1",
+      "timestamp": "2026-09-29T13:11:45.647Z"
+    },
+    {
+      "id": "AUD-1790687494356-977",
+      "userId": "USR-SUPER",
+      "userName": "Fr. Joshy N George",
+      "userRole": "PRIEST",
+      "action": "USER_LOGIN",
+      "resource": "AUTH",
+      "details": "User logged in from identifier: admin",
+      "timestamp": "2026-09-29T13:11:34.356Z"
+    },
+    {
       "id": "AUD-1790493217218-987",
       "userId": "USR-PRIEST",
       "userName": "Fr. Joshy N George",
@@ -1103,7 +1042,7 @@
     "tradition": "Syro-Malabar Catholic Church",
     "diocese": "Diocese of Hosur",
     "parishPriest": "Fr. Joshy N George",
-    "assistantPriests": "[ASSISTANT PRIEST NAME]",
+    "assistantPriests": "Msgr. Varghese Pereppadan",
     "address": "9, 1E, GST Road, J C K Nagar, Chengalpattu, Tamil Nadu 603002",
     "phone": "+91 97421 62172",
     "email": "stmariamthresiaparish@gmail.com",
@@ -1115,7 +1054,7 @@
       "instagram": "https://instagram.com"
     },
     "heroTagline": "United in Faith. Growing in Love. Serving Together.",
-    "heroImageUrl": "/src/assets/images/hero_church_facade_1790490137085.jpg",
+    "heroImageUrl": "/src/assets/images/holy_qurbana_altar_1790490159004.jpg",
     "altarImageUrl": "/src/assets/images/holy_qurbana_altar_1790490159004.jpg",
     "communityImageUrl": "/src/assets/images/parish_community_gathering_1790490173737.jpg",
     "aboutHistory": "[PARISH HISTORY TO BE ADDED]",

@@ -100,7 +100,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
       await login(identifier, password);
       // Determine destination based on user credentials
       setTimeout(() => {
-        if (identifier.toLowerCase().includes('priest')) {
+        const idLower = identifier.toLowerCase();
+        if (idLower === 'admin' || idLower.includes('priest') || idLower.includes('admin')) {
           navigate('/priest/dashboard');
         } else {
           navigate('/member/dashboard');
@@ -267,14 +268,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
               <form onSubmit={handleLoginSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1">
-                    Member ID or Email Address
+                    Login ID or Registered Email
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
+                    <User className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
                     <input
                       type="text"
                       required
-                      placeholder="e.g. DEMO-001 or demo.member@church.org"
+                      placeholder="e.g. admin, member1, member2"
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       className="w-full pl-9 pr-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
@@ -300,7 +301,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
                     <input
                       type="password"
                       required
-                      placeholder="••••••••"
+                      placeholder="e.g. admin123 or member123"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full pl-9 pr-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
@@ -489,51 +490,74 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
             </div>
           )}
 
-          {/* Fast 1-Click Role Testing (strictly TWO roles: Priest & Member + Pending test) */}
+          {/* Simple Login ID & Password Reference Cards (1-Click Auto-Fill & Test) */}
           <div className="pt-4 border-t border-stone-200">
             <span className="block text-[11px] uppercase tracking-wider text-stone-500 font-semibold text-center mb-2.5">
-              1-Click Role Testing
+              Simple Demo Login Credentials
             </span>
 
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <button
-                type="button"
-                onClick={() => handleDemoClick('priest')}
-                className="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 rounded-xl font-medium text-left cursor-pointer transition-colors"
-              >
-                <span className="font-bold block text-xs">Fr. Joshy N George</span>
-                <span className="text-[10px] text-stone-500">Parish Priest & Approver</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDemoClick('member1')}
-                className="p-2.5 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 rounded-xl font-medium text-left cursor-pointer transition-colors"
-              >
-                <span className="font-bold block text-xs">Member (Approved)</span>
-                <span className="text-[10px] text-stone-500">John Demo · Head of Family</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDemoClick('member2')}
-                className="p-2.5 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 rounded-xl font-medium text-left cursor-pointer transition-colors"
-              >
-                <span className="font-bold block text-xs">Member (Family 2)</span>
-                <span className="text-[10px] text-stone-500">Thomas Demo · Nazareth Villa</span>
-              </button>
-
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px]">
+              {/* Admin */}
               <button
                 type="button"
                 onClick={() => {
-                  setIdentifier('joseph.pc@example.com');
-                  setPassword('member123');
-                  setError('Your registration is currently pending approval by the Parish Priest. You will be able to log in once your account has been approved.');
+                  setIdentifier('admin');
+                  setPassword('admin123');
+                  handleDemoClick('priest');
                 }}
-                className="p-2.5 bg-amber-50/50 hover:bg-amber-100/60 text-amber-900 border border-amber-200/80 rounded-xl font-medium text-left cursor-pointer transition-colors"
+                className="p-3 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 rounded-xl font-medium text-left cursor-pointer transition-all shadow-xs"
               >
-                <span className="font-bold block text-xs">Pending Applicant</span>
-                <span className="text-[10px] text-amber-800">Joseph P.C. (Tests Pending Block)</span>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-xs text-amber-900">Admin</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-900 font-mono">1-Click</span>
+                </div>
+                <div className="text-[11px] text-stone-600 space-y-0.5 font-mono">
+                  <div>ID: <strong className="text-stone-900">admin</strong></div>
+                  <div>PW: <strong className="text-stone-900">admin123</strong></div>
+                </div>
+                <span className="text-[10px] text-amber-800/80 block mt-1">Parish Vicar / Admin</span>
+              </button>
+
+              {/* Demo Member 1 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIdentifier('member1');
+                  setPassword('member123');
+                  handleDemoClick('member1');
+                }}
+                className="p-3 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 rounded-xl font-medium text-left cursor-pointer transition-all shadow-xs"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-xs text-stone-900">Member 1</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 font-mono">1-Click</span>
+                </div>
+                <div className="text-[11px] text-stone-600 space-y-0.5 font-mono">
+                  <div>ID: <strong className="text-stone-900">member1</strong></div>
+                  <div>PW: <strong className="text-stone-900">member123</strong></div>
+                </div>
+                <span className="text-[10px] text-stone-500 block mt-1 truncate">John Demo · Palackal</span>
+              </button>
+
+              {/* Demo Member 2 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIdentifier('member2');
+                  setPassword('member123');
+                  handleDemoClick('member2');
+                }}
+                className="p-3 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 rounded-xl font-medium text-left cursor-pointer transition-all shadow-xs"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-xs text-stone-900">Member 2</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 font-mono">1-Click</span>
+                </div>
+                <div className="text-[11px] text-stone-600 space-y-0.5 font-mono">
+                  <div>ID: <strong className="text-stone-900">member2</strong></div>
+                  <div>PW: <strong className="text-stone-900">member123</strong></div>
+                </div>
+                <span className="text-[10px] text-stone-500 block mt-1 truncate">Thomas Demo · Nazareth</span>
               </button>
             </div>
           </div>

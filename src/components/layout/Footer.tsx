@@ -127,14 +127,6 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
                   Photo Gallery & Archives
                 </button>
               </li>
-              <li>
-                <button
-                  onClick={() => navigate('/organizations')}
-                  className="hover:text-amber-300 transition-colors text-left"
-                >
-                  Parish Organizations & Pious Associations
-                </button>
-              </li>
             </ul>
           </div>
 
@@ -145,7 +137,7 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
             </h3>
             <div className="space-y-2 text-xs text-stone-400">
               <p className="font-medium text-stone-200">Sunday Holy Qurbana</p>
-              <p>Morning & Evening celebrations in Malayalam & English.</p>
+              <p>Morning celebration in Malayalam & English.</p>
               <div className="pt-2 border-t border-stone-800">
                 <p className="font-medium text-stone-200">Daily Celebrations</p>
                 <p>Morning Mass, First Friday Adoration, and Saturday Novena.</p>
@@ -167,21 +159,36 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
             </h3>
             <ul className="space-y-2.5 text-xs text-stone-400">
               <li className="text-stone-300">
-                <span className="font-semibold text-amber-300 block text-[11px] uppercase tracking-wider">Parish Priest / Vicar</span>
-                <span>{parishPriest}</span>
+                <span className="font-semibold text-amber-300 block text-[11px] uppercase tracking-wider">Parish Clergy</span>
+                <span>{parishPriest} · Msgr. Varghese Pereppadan</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <span className="break-words">{address}</span>
               </li>
+              <li className="flex items-center gap-2.5 pt-1">
+                <Phone className="w-4 h-4 text-amber-400 shrink-0" />
+                <div>
+                  <span className="text-[10px] text-stone-400 uppercase tracking-wider block font-semibold">1. Church Phone Number</span>
+                  <a
+                    href="tel:+919742162172"
+                    className="hover:text-amber-300 text-stone-200 font-semibold transition-colors hover:underline text-xs"
+                  >
+                    +91 97421 62172
+                  </a>
+                </div>
+              </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                <a
-                  href={`tel:${phone.replace(/\s+/g, '')}`}
-                  className="hover:text-amber-300 transition-colors hover:underline"
-                >
-                  {phone}
-                </a>
+                <div>
+                  <span className="text-[10px] text-stone-400 uppercase tracking-wider block font-semibold">2. Priest Phone Number</span>
+                  <a
+                    href="tel:+919742162172"
+                    className="hover:text-amber-300 text-stone-200 font-semibold transition-colors hover:underline text-xs"
+                  >
+                    +91 97421 62172
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
@@ -198,13 +205,22 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
               </li>
             </ul>
             <div className="pt-2 flex flex-col gap-2">
-              <a
-                href={`tel:${phone.replace(/\s+/g, '')}`}
-                className="w-full text-center py-2 px-3 bg-amber-900 hover:bg-amber-950 text-white text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span>Call Church</span>
-              </a>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href="tel:+919742162172"
+                  className="w-full text-center py-2 px-2 bg-amber-900 hover:bg-amber-950 text-white text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Call Church</span>
+                </a>
+                <a
+                  href="tel:+919742162172"
+                  className="w-full text-center py-2 px-2 bg-stone-800 hover:bg-stone-700 text-amber-300 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1 border border-stone-700"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Call Priest</span>
+                </a>
+              </div>
               <a
                 href="https://www.google.com/maps/dir/?api=1&destination=9%2C+1E%2C+GST+Road%2C+J+C+K+Nagar%2C+Chengalpattu%2C+Tamil+Nadu+603002"
                 target="_blank"

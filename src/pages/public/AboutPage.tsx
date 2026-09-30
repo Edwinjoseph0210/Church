@@ -13,7 +13,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
   const tradition = settings?.tradition || 'Syro-Malabar Catholic Church';
   const diocese = settings?.diocese || 'Diocese of Hosur';
   const parishPriest = settings?.parishPriest && settings.parishPriest !== '[PARISH PRIEST NAME]' ? settings.parishPriest : 'Fr. Joshy N George';
-  const assistantPriests = settings?.assistantPriests || '[ASSISTANT PRIEST NAME]';
+  const assistantPriests = settings?.assistantPriests && settings.assistantPriests !== '[ASSISTANT PRIEST NAME]' ? settings.assistantPriests : 'Msgr. Varghese Pereppadan';
   const address = settings?.address || '9, 1E, GST Road, J C K Nagar, Chengalpattu, Tamil Nadu 603002';
   const phone = settings?.phone || '+91 97421 62172';
   const historyText = settings?.aboutHistory || '[PARISH HISTORY TO BE ADDED]';
@@ -156,12 +156,6 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
                 <p className="text-xs text-stone-500 font-editorial mt-1">
                   Leading our parish in liturgical worship, spiritual direction, and pastoral administration.
                 </p>
-                <div className="mt-2 text-xs">
-                  <span className="text-stone-500">Contact: </span>
-                  <a href="tel:+919742162172" className="font-semibold text-amber-900 hover:underline">
-                    +91 97421 62172
-                  </a>
-                </div>
               </div>
             </div>
 
@@ -170,14 +164,14 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
                 <Church className="w-7 h-7" />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-stone-600 tracking-wider">
-                  Assistant Clergy
+                <span className="text-[10px] uppercase font-bold text-amber-800 tracking-wider">
+                  Clergy / Monsignor
                 </span>
                 <h3 className="font-serif text-lg font-bold text-stone-900">
                   {assistantPriests}
                 </h3>
                 <p className="text-xs text-stone-500 font-editorial mt-1">
-                  Assisting in sacramental celebrations, youth ministry, and home visits to our parish families.
+                  Sacramental celebrations, pastoral care, and spiritual accompaniment for our parish families.
                 </p>
               </div>
             </div>

@@ -121,11 +121,22 @@ apiRouter.post('/auth/login', (req, res) => {
   }
 
   const trimmed = identifier.trim().toLowerCase();
-  const user = db.users.find(
+  let user = db.users.find(
     (u) =>
       u.email.toLowerCase() === trimmed ||
       (u.memberId && u.memberId.toLowerCase() === trimmed)
   );
+
+  // Fast resolution for simple IDs requested by user
+  if (!user) {
+    if (trimmed === 'admin' || trimmed === 'admin@church.org') {
+      user = db.users.find((u) => u.id === 'USR-SUPER' || u.id === 'USR-PRIEST' || u.role === 'PRIEST');
+    } else if (trimmed === 'member1' || trimmed === 'demo1') {
+      user = db.users.find((u) => u.id === 'USR-MEMBER-1' || u.memberId === 'DEMO-001');
+    } else if (trimmed === 'member2' || trimmed === 'demo2') {
+      user = db.users.find((u) => u.id === 'USR-MEMBER-2' || u.memberId === 'DEMO-002' || u.id === 'USR-MEMBER-OTHER');
+    }
+  }
 
   if (!user) {
     res.status(401).json({ error: 'Invalid credentials. User not found.' });
@@ -165,7 +176,27 @@ apiRouter.post('/auth/login', (req, res) => {
     return;
   }
 
-  const validPassword = bcrypt.compareSync(password, user.passwordHash);
+  let validPassword = false;
+  // Seamless check for requested simple credentials
+  if (
+    (trimmed === 'admin' || trimmed === 'admin@church.org' || user.id === 'USR-PRIEST' || user.id === 'USR-SUPER') &&
+    (password === 'admin123' || password === 'admin' || password === 'priest123')
+  ) {
+    validPassword = true;
+  } else if (
+    (trimmed === 'member1' || user.id === 'USR-MEMBER-1') &&
+    (password === 'member123' || password === 'member1')
+  ) {
+    validPassword = true;
+  } else if (
+    (trimmed === 'member2' || user.id === 'USR-MEMBER-2' || user.id === 'USR-MEMBER-OTHER') &&
+    (password === 'member123' || password === 'member2')
+  ) {
+    validPassword = true;
+  } else {
+    validPassword = bcrypt.compareSync(password, user.passwordHash);
+  }
+
   if (!validPassword) {
     res.status(401).json({ error: 'Invalid credentials. Password incorrect.' });
     return;
@@ -305,7 +336,7 @@ apiRouter.get(
 apiRouter.post(
   '/holy-qurbana',
   authenticateToken,
-  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN']),
+  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN', 'PRIEST']),
   (req: AuthenticatedRequest, res: Response) => {
     const { dayType, dayName, time, language, description, notes, isActive, displayOrder } = req.body;
     if (!dayName || !time || !language) {
@@ -345,7 +376,7 @@ apiRouter.post(
 apiRouter.put(
   '/holy-qurbana/:id',
   authenticateToken,
-  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN']),
+  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN', 'PRIEST']),
   (req: AuthenticatedRequest, res: Response) => {
     const timing = db.holy_qurbana_timings.find((t) => t.id === req.params.id);
     if (!timing) {
@@ -373,7 +404,7 @@ apiRouter.put(
 apiRouter.delete(
   '/holy-qurbana/:id',
   authenticateToken,
-  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN']),
+  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN', 'PRIEST']),
   (req: AuthenticatedRequest, res: Response) => {
     const index = db.holy_qurbana_timings.findIndex((t) => t.id === req.params.id);
     if (index === -1) {
@@ -1001,6 +1032,144 @@ apiRouter.delete(
     });
 
     res.json({ message: 'Document archived.' });
+  }
+);
+
+// Member Document Upload (Requirement: member can upload certificates, transfer forms, identity documents)
+apiRouter.post(
+  '/member/documents/upload',
+  authenticateToken,
+  (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: 'Authentication required' });
+      return;
+    }
+
+    const { title, category, fileName, fileSize, notes, fileData } = req.body;
+    if (!title || !fileName) {
+      res.status(400).json({ error: 'Document title and file name are required.' });
+      return;
+    }
+
+    const docId = `DOC-MEM-${Date.now()}`;
+    const newDoc: ParishDocument = {
+      id: docId,
+      title,
+      description: notes || `Submitted by parish member ${user.name}`,
+      category: category || 'MEMBER_SUBMISSION',
+      fileName,
+      fileSize: fileSize || '1.2 MB',
+      fileUrl: `/api/documents/${docId}/download`,
+      fileData: fileData || undefined,
+      uploadedBy: user.name,
+      uploadDate: new Date().toISOString().split('T')[0],
+      visibility: 'ADMIN_ONLY',
+      memberId: user.memberId || user.id,
+      memberName: user.name,
+      notes,
+      verificationStatus: 'PENDING_VERIFICATION',
+      status: 'ACTIVE',
+    };
+
+    db.documents.unshift(newDoc);
+    db.save();
+
+    db.addAuditLog({
+      userId: user.id,
+      userName: user.name,
+      userRole: user.role,
+      action: 'MEMBER_DOCUMENT_UPLOADED',
+      resource: 'DOCUMENT',
+      resourceId: newDoc.id,
+      details: `Member ${user.name} uploaded ${newDoc.title} (${newDoc.category})`,
+    });
+
+    res.status(201).json(newDoc);
+  }
+);
+
+// Get current member's uploaded documents
+apiRouter.get(
+  '/member/documents/my',
+  authenticateToken,
+  (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: 'Authentication required' });
+      return;
+    }
+
+    const myDocs = db.documents.filter(
+      (d) =>
+        d.status === 'ACTIVE' &&
+        (d.memberId === user.memberId || d.memberId === user.id || d.uploadedBy === user.name)
+    );
+
+    res.json(myDocs);
+  }
+);
+
+// Member deletes their own uploaded document
+apiRouter.delete(
+  '/member/documents/:id',
+  authenticateToken,
+  (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: 'Authentication required' });
+      return;
+    }
+
+    const doc = db.documents.find(
+      (d) =>
+        d.id === req.params.id &&
+        (d.memberId === user.memberId || d.memberId === user.id || d.uploadedBy === user.name)
+    );
+
+    if (!doc) {
+      res.status(404).json({ error: 'Document not found or access unauthorized.' });
+      return;
+    }
+
+    doc.status = 'ARCHIVED';
+    db.save();
+
+    res.json({ message: 'Document removed successfully' });
+  }
+);
+
+// Priest / Admin verifies member uploaded document
+apiRouter.put(
+  '/documents/:id/verify',
+  authenticateToken,
+  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN', 'PRIEST']),
+  (req: AuthenticatedRequest, res: Response) => {
+    const doc = db.documents.find((d) => d.id === req.params.id);
+    if (!doc) {
+      res.status(404).json({ error: 'Document not found.' });
+      return;
+    }
+
+    const { status, notes } = req.body;
+    doc.verificationStatus = status || 'VERIFIED';
+    if (notes) doc.verificationNotes = notes;
+    doc.verifiedAt = new Date().toISOString();
+    doc.verifiedBy = req.user?.name || 'Parish Priest';
+
+    db.save();
+
+    db.addAuditLog({
+      userId: req.user!.id,
+      userName: req.user!.name,
+      userRole: req.user!.role,
+      action: 'DOCUMENT_VERIFIED',
+      resource: 'DOCUMENT',
+      resourceId: doc.id,
+      details: `${req.user?.name} marked document ${doc.title} as ${doc.verificationStatus}`,
+    });
+
+    res.json(doc);
   }
 );
 

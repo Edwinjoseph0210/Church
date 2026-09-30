@@ -69,12 +69,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const quickLoginAs = async (role: 'priest' | 'member1' | 'member2' | 'pending' | 'super' | 'admin' | 'youth') => {
     const credentials = {
-      priest: { id: 'priest@church.org', pw: 'priest123' },
-      super: { id: 'priest@church.org', pw: 'priest123' },
-      admin: { id: 'priest@church.org', pw: 'priest123' },
-      youth: { id: 'demo.member@church.org', pw: 'member123' },
-      member1: { id: 'demo.member@church.org', pw: 'member123' },
-      member2: { id: 'other.member@church.org', pw: 'member123' },
+      priest: { id: 'admin', pw: 'admin123' },
+      super: { id: 'admin', pw: 'admin123' },
+      admin: { id: 'admin', pw: 'admin123' },
+      youth: { id: 'member1', pw: 'member123' },
+      member1: { id: 'member1', pw: 'member123' },
+      member2: { id: 'member2', pw: 'member123' },
       pending: { id: 'joseph.pc@example.com', pw: 'member123' },
     };
 

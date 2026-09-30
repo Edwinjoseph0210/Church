@@ -143,13 +143,27 @@ export const PriestDashboardPage: React.FC<PriestDashboardPageProps> = ({ naviga
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => navigate('/admin/holy-qurbana')}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-amber-900 hover:bg-amber-950 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+          >
+            <Clock className="w-4 h-4" />
+            <span>+ Add Qurbana Timing</span>
+          </button>
+          <button
+            onClick={() => navigate('/admin/documents')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200 rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Member Documents</span>
+          </button>
           <button
             onClick={() => navigate('/priest/members')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer"
           >
             <Users className="w-4 h-4" />
-            <span>View Parish Members</span>
+            <span>Parish Members</span>
           </button>
         </div>
       </div>

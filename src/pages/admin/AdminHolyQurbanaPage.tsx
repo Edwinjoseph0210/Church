@@ -50,7 +50,7 @@ export const AdminHolyQurbanaPage: React.FC = () => {
     setFormData({
       dayType: 'SUNDAY',
       dayName: '',
-      time: '[HOLY QURBANA TIMINGS]',
+      time: '07:00 AM',
       language: 'Malayalam & English',
       description: '',
       notes: '',
@@ -138,10 +138,10 @@ export const AdminHolyQurbanaPage: React.FC = () => {
 
         <button
           onClick={openCreate}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-900 hover:bg-amber-950 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-900 hover:bg-amber-950 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Liturgy Timing</span>
+          <span>Add Holy Qurbana Timing</span>
         </button>
       </div>
 
@@ -300,7 +300,7 @@ export const AdminHolyQurbanaPage: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. 07:00 AM or [HOLY QURBANA TIMINGS]"
+                    placeholder="e.g. 07:00 AM or 06:30 PM"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800"

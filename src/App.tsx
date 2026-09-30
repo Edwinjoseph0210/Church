@@ -3,7 +3,6 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
-import { DemoSwitcher } from './components/ui/DemoSwitcher';
 import { MemberLayout } from './components/layout/MemberLayout';
 import { PriestLayout } from './components/layout/PriestLayout';
 
@@ -27,10 +26,13 @@ import { MemberEventsPage } from './pages/member/MemberEventsPage';
 import { MemberDocumentsPage } from './pages/member/MemberDocumentsPage';
 import { MemberSettingsPage } from './pages/member/MemberSettingsPage';
 
-// Priest Pages (Requirement 13, 14, 15)
+// Priest & Admin Pages
 import { PriestDashboardPage } from './pages/priest/PriestDashboardPage';
 import { PriestMembersPage } from './pages/priest/PriestMembersPage';
 import { PriestFamilyViewPage } from './pages/priest/PriestFamilyViewPage';
+import { AdminHolyQurbanaPage } from './pages/admin/AdminHolyQurbanaPage';
+import { AdminDocumentsPage } from './pages/admin/AdminDocumentsPage';
+import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
 
 import { ShieldAlert, ArrowLeft, LogIn } from 'lucide-react';
 
@@ -99,7 +101,6 @@ function AppContent() {
               </button>
             </div>
           </div>
-          <DemoSwitcher navigate={navigate} />
         </div>
       );
     }
@@ -133,7 +134,6 @@ function AppContent() {
               </button>
             </div>
           </div>
-          <DemoSwitcher navigate={navigate} />
         </div>
       );
     }
@@ -144,7 +144,6 @@ function AppContent() {
       return (
         <PriestLayout currentPath={currentPath} navigate={navigate}>
           <PriestFamilyViewPage memberId={memberId} navigate={navigate} />
-          <DemoSwitcher navigate={navigate} />
         </PriestLayout>
       );
     }
@@ -154,7 +153,33 @@ function AppContent() {
       return (
         <PriestLayout currentPath="/priest/members" navigate={navigate}>
           <PriestMembersPage navigate={navigate} />
-          <DemoSwitcher navigate={navigate} />
+        </PriestLayout>
+      );
+    }
+
+    // Holy Qurbana Timings Management: /admin/holy-qurbana or /priest/holy-qurbana
+    if (currentPath === '/admin/holy-qurbana' || currentPath === '/priest/holy-qurbana') {
+      return (
+        <PriestLayout currentPath="/admin/holy-qurbana" navigate={navigate}>
+          <AdminHolyQurbanaPage />
+        </PriestLayout>
+      );
+    }
+
+    // Parish Documents Repository & Member Uploads: /admin/documents or /priest/documents
+    if (currentPath === '/admin/documents' || currentPath === '/priest/documents') {
+      return (
+        <PriestLayout currentPath="/admin/documents" navigate={navigate}>
+          <AdminDocumentsPage />
+        </PriestLayout>
+      );
+    }
+
+    // Parish Settings & Config: /admin/settings or /priest/settings
+    if (currentPath === '/admin/settings' || currentPath === '/priest/settings') {
+      return (
+        <PriestLayout currentPath="/admin/settings" navigate={navigate}>
+          <AdminSettingsPage />
         </PriestLayout>
       );
     }
@@ -163,7 +188,6 @@ function AppContent() {
     return (
       <PriestLayout currentPath="/priest/dashboard" navigate={navigate}>
         <PriestDashboardPage navigate={navigate} />
-        <DemoSwitcher navigate={navigate} />
       </PriestLayout>
     );
   }
@@ -198,7 +222,6 @@ function AppContent() {
               </button>
             </div>
           </div>
-          <DemoSwitcher navigate={navigate} />
         </div>
       );
     }
@@ -216,7 +239,6 @@ function AppContent() {
         {(currentPath === '/member/prayers' || currentPath === '/member/appointments' || currentPath === '/member/notifications') && (
           <MemberDashboardPage navigate={navigate} />
         )}
-        <DemoSwitcher navigate={navigate} />
       </MemberLayout>
     );
   }
@@ -268,7 +290,6 @@ function AppContent() {
         {renderPublicPage()}
       </main>
       <Footer navigate={navigate} />
-      <DemoSwitcher navigate={navigate} />
     </div>
   );
 }

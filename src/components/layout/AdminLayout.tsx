@@ -57,7 +57,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, navigate,
           ? [
               { label: 'Gallery', path: '/admin/gallery', icon: ImageIcon },
               { label: 'Documents', path: '/admin/documents', icon: FileText },
-              { label: 'Organizations', path: '/admin/organizations', icon: Bookmark },
             ]
           : []),
       ],
@@ -69,7 +68,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, navigate,
             items: [
               { label: 'Sacramental Records', path: '/admin/sacraments', icon: Scroll },
               { label: 'Prayer Intentions', path: '/admin/prayers', icon: Heart },
-              { label: 'Appointments', path: '/admin/appointments', icon: CalendarCheck },
               { label: 'Contact Inquiries', path: '/admin/contact-messages', icon: Mail },
             ],
           },

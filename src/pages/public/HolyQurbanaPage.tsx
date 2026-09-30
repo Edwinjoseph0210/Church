@@ -134,10 +134,10 @@ export const HolyQurbanaPage: React.FC<HolyQurbanaPageProps> = ({ navigate }) =>
             </p>
             <div className="pt-2">
               <button
-                onClick={() => navigate('/login')}
-                className="text-xs font-semibold text-amber-900 hover:text-amber-700"
+                onClick={() => navigate('/contact')}
+                className="text-xs font-semibold text-amber-900 hover:text-amber-700 cursor-pointer"
               >
-                Schedule Private Appointment with Father →
+                Inquire with Parish Office →
               </button>
             </div>
           </div>

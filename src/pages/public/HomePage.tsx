@@ -61,7 +61,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const churchPhone = settings?.phone || '+91 97421 62172';
   const churchEmail = settings?.email || 'stmariamthresiaparish@gmail.com';
   const churchDiocese = settings?.diocese || 'Diocese of Hosur';
-  const heroImage = settings?.heroImageUrl || '/src/assets/images/hero_church_facade_1790490137085.jpg';
+  const heroImage = settings?.heroImageUrl || '/src/assets/images/holy_qurbana_altar_1790490159004.jpg';
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -71,7 +71,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
         <div className="absolute inset-0 z-0">
           <img
             src={heroImage}
-            alt="St. Mariam Thresia Church sanctuary facade"
+            alt="St. Mariam Thresia Church sanctuary altar"
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover object-center opacity-45 scale-105 transition-transform duration-1000 ease-out"
           />
@@ -105,6 +105,13 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
               className="w-full sm:w-auto px-7 py-3.5 text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/25 rounded-lg backdrop-blur-md transition-all cursor-pointer"
             >
               Upcoming Events
+            </button>
+            <button
+              onClick={() => navigate('/login')}
+              className="w-full sm:w-auto px-7 py-3.5 text-sm font-semibold text-amber-200 bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 rounded-lg backdrop-blur-md transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+            >
+              <User className="w-4 h-4 text-amber-400" />
+              <span>Member Login</span>
             </button>
           </div>
 
@@ -191,60 +198,80 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
         </div>
       </section>
 
-      {/* 3. PARISH PRIEST SECTION */}
+      {/* 3. PARISH CLERGY & PASTORAL CARE SECTION */}
       <section className="py-20 bg-stone-100/60 border-b border-stone-200/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden p-8 sm:p-12 flex flex-col md:flex-row items-center gap-10">
-            {/* Pastoral Portrait / Avatar */}
-            <div className="w-44 h-44 rounded-2xl bg-gradient-to-br from-stone-200 to-amber-100 border border-stone-300 flex items-center justify-center shrink-0 shadow-inner overflow-hidden">
-              <div className="text-center p-4">
-                <div className="w-14 h-14 mx-auto rounded-full bg-amber-900 text-amber-100 flex items-center justify-center mb-2">
-                  <Church className="w-7 h-7" />
-                </div>
-                <span className="text-[10px] uppercase font-bold text-amber-900 tracking-wider">
-                  Pastoral Office
-                </span>
-              </div>
-            </div>
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs uppercase tracking-widest text-amber-800 font-semibold">
+              Pastoral Leadership & Clergy
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 mt-1">
+              Parish Priests
+            </h2>
+            <p className="text-xs text-stone-500 font-editorial mt-1">
+              Ministers of the Holy Mysteries and spiritual shepherds of our parish family
+            </p>
+          </div>
 
-            <div className="space-y-4 text-center md:text-left">
-              <div>
-                <span className="text-xs uppercase tracking-widest text-amber-800 font-semibold">
-                  Parish Vicar
-                </span>
-                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
-                  {parishPriestName}
-                </h3>
-                <p className="text-xs text-stone-500 font-medium">
-                  Vicar & Pastor · {churchName}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Priest 1: Fr. Joshy N George */}
+            <div className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200">
+                    Parish Vicar
+                  </span>
+                  <span className="text-[11px] text-stone-500 font-medium">{churchDiocese}</span>
+                </div>
+                <div>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                    {parishPriestName}
+                  </h3>
+                  <p className="text-xs text-stone-500 font-medium mt-0.5">
+                    Vicar & Pastor · {churchName}
+                  </p>
+                </div>
+                <p className="font-editorial text-xs sm:text-sm text-stone-700 leading-relaxed italic pt-1">
+                  "May the peace of Christ and the tender protection of Saint Mariam Thresia dwell in your homes. Our parish is a welcoming family of families, ready to accompany you in prayer, the sacraments, and fellowship. Come, let us worship the Lord in holiness."
                 </p>
-                <div className="pt-1 flex items-center justify-center md:justify-start gap-2">
-                  <span className="text-[11px] text-stone-600 font-medium">Pastoral Mobile:</span>
-                  <a
-                    href="tel:+919742162172"
-                    className="text-xs font-bold text-amber-900 hover:text-amber-950 hover:underline"
-                  >
-                    +91 97421 62172
-                  </a>
-                </div>
               </div>
-
-              <p className="font-editorial text-sm sm:text-base text-stone-700 leading-relaxed italic">
-                "May the peace of Christ and the tender protection of Saint Mariam Thresia dwell in your homes. Our parish is a welcoming family of families, ready to accompany you in prayer, the sacraments, and fellowship. Come, let us worship the Lord in holiness."
-              </p>
-
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2">
+              <div className="pt-2 border-t border-stone-100">
                 <button
                   onClick={() => navigate('/contact')}
-                  className="px-5 py-2.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer text-center"
                 >
                   Contact Parish Office
                 </button>
+              </div>
+            </div>
+
+            {/* Priest 2: Msgr. Varghese Pereppadan */}
+            <div className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-stone-100 text-stone-800 border border-stone-200">
+                    Clergy / Monsignor
+                  </span>
+                  <span className="text-[11px] text-stone-500 font-medium">{churchDiocese}</span>
+                </div>
+                <div>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                    Msgr. Varghese Pereppadan
+                  </h3>
+                  <p className="text-xs text-stone-500 font-medium mt-0.5">
+                    Pastoral Care & Sacramental Ministry · {churchName}
+                  </p>
+                </div>
+                <p className="font-editorial text-xs sm:text-sm text-stone-700 leading-relaxed italic pt-1">
+                  "Accompanied by prayer, the holy sacrifice of the Eucharist, and acts of love, we journey together in faith. Let the light of the Gospel guide our daily life and families."
+                </p>
+              </div>
+              <div className="pt-2 border-t border-stone-100">
                 <button
-                  onClick={() => navigate('/login')}
-                  className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                  onClick={() => navigate('/holy-qurbana')}
+                  className="w-full sm:w-auto px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer text-center"
                 >
-                  Request Pastoral Appointment
+                  View Liturgy Schedule
                 </button>
               </div>
             </div>
@@ -276,7 +303,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${timings.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6`}>
             {timings.map((t) => (
               <div
                 key={t.id}
@@ -329,42 +356,65 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {announcements.map((ann) => (
-              <div
-                key={ann.id}
-                onClick={() => navigate(`/announcements`)}
-                className="bg-white rounded-xl border border-stone-200/90 shadow-xs hover:shadow-md transition-all p-6 cursor-pointer flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center gap-2 text-xs text-stone-500 mb-3">
-                    <span className="font-semibold text-amber-900">{ann.category}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{ann.publishDate}</span>
-                    {ann.isImportant && (
-                      <>
+          {announcements.length === 0 ? (
+            <div className="bg-white rounded-2xl p-10 border border-stone-200/90 text-center max-w-xl mx-auto shadow-xs">
+              <Megaphone className="w-8 h-8 text-amber-900/50 mx-auto mb-3" />
+              <h3 className="font-serif text-lg font-bold text-stone-900 mb-1">
+                No Announcements Currently Posted
+              </h3>
+              <p className="text-xs text-stone-500 font-editorial leading-relaxed">
+                Parish notices and pastoral communications will be posted directly here by the Parish Priest. Please check back soon.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {announcements.map((ann) => (
+                <div
+                  key={ann.id}
+                  onClick={() => navigate(`/announcements`)}
+                  className="bg-white rounded-xl border border-stone-200/90 shadow-xs hover:shadow-md transition-all overflow-hidden cursor-pointer flex flex-col justify-between"
+                >
+                  {ann.imageUrl && (
+                    <div className="h-44 overflow-hidden bg-stone-100">
+                      <img
+                        src={ann.imageUrl}
+                        alt={ann.title}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 text-xs text-stone-500 mb-3">
+                        <span className="font-semibold text-amber-900">{ann.category}</span>
                         <span aria-hidden="true">·</span>
-                        <span className="text-red-700 font-semibold flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
-                          Important
-                        </span>
-                      </>
-                    )}
+                        <span>{ann.publishDate}</span>
+                        {ann.isImportant && (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span className="text-red-700 font-semibold flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" />
+                              Important
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <h3 className="font-serif text-lg font-bold text-stone-900 mb-2 leading-snug hover:text-amber-900 transition-colors">
+                        {ann.title}
+                      </h3>
+                      <p className="text-xs text-stone-600 line-clamp-3 leading-relaxed font-editorial">
+                        {ann.content}
+                      </p>
+                    </div>
+                    <div className="pt-4 mt-4 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
+                      <span>By: {ann.author}</span>
+                      <span className="text-amber-900 font-medium">Read More →</span>
+                    </div>
                   </div>
-                  <h3 className="font-serif text-lg font-bold text-stone-900 mb-2 leading-snug hover:text-amber-900 transition-colors">
-                    {ann.title}
-                  </h3>
-                  <p className="text-xs text-stone-600 line-clamp-3 leading-relaxed font-editorial">
-                    {ann.content}
-                  </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
-                  <span>By: {ann.author}</span>
-                  <span className="text-amber-900 font-medium">Read More →</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

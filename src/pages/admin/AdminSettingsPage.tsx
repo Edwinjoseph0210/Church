@@ -16,6 +16,7 @@ export const AdminSettingsPage: React.FC = () => {
     officeHours: '',
     website: '',
     heroTagline: '',
+    heroImageUrl: '',
     aboutHistory: '',
     missionStatement: '',
     visionStatement: '',
@@ -31,13 +32,14 @@ export const AdminSettingsPage: React.FC = () => {
         tradition: settings.tradition || 'Syro-Malabar Catholic Church',
         diocese: settings.diocese || 'Diocese of Hosur',
         parishPriest: settings.parishPriest && settings.parishPriest !== '[PARISH PRIEST NAME]' ? settings.parishPriest : 'Fr. Joshy N George',
-        assistantPriests: settings.assistantPriests || '[ASSISTANT PRIEST NAME]',
+        assistantPriests: settings.assistantPriests && settings.assistantPriests !== '[ASSISTANT PRIEST NAME]' ? settings.assistantPriests : 'Msgr. Varghese Pereppadan',
         address: settings.address || '9, 1E, GST Road, J C K Nagar, Chengalpattu, Tamil Nadu 603002',
         phone: settings.phone || '+91 97421 62172',
         email: settings.email || 'stmariamthresiaparish@gmail.com',
         officeHours: settings.officeHours || 'Monday - Saturday: 9:00 AM - 1:00 PM, 4:00 PM - 7:00 PM',
         website: settings.website || 'https://stmariamthresia.church',
         heroTagline: settings.heroTagline || 'United in Faith. Growing in Love. Serving Together.',
+        heroImageUrl: settings.heroImageUrl || '/src/assets/images/holy_qurbana_altar_1790490159004.jpg',
         aboutHistory: settings.aboutHistory || '[PARISH HISTORY TO BE ADDED]',
         missionStatement: settings.missionStatement || '',
         visionStatement: settings.visionStatement || '',
@@ -238,6 +240,29 @@ export const AdminSettingsPage: React.FC = () => {
               onChange={(e) => setFormData({ ...formData, heroTagline: e.target.value })}
               className="w-full px-3 py-2 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800 font-editorial text-sm"
             />
+          </div>
+
+          <div>
+            <label className="block font-semibold text-stone-700 mb-1">
+              Hero Section Background Image URL
+            </label>
+            <input
+              type="text"
+              value={formData.heroImageUrl}
+              onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
+              placeholder="/src/assets/images/... or public image URL"
+              className="w-full px-3 py-2 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800 font-mono text-xs"
+            />
+            {formData.heroImageUrl && (
+              <div className="mt-2 relative w-48 h-24 rounded-lg overflow-hidden border border-stone-200 shadow-xs">
+                <img
+                  src={formData.heroImageUrl}
+                  alt="Hero Preview"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
           </div>
 
           <div>

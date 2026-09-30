@@ -9,6 +9,7 @@ export const AdminDocumentsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<'PARISH_DOCS' | 'MEMBER_UPLOADS'>('PARISH_DOCS');
 
   const [formData, setFormData] = useState<{
     title: string;
@@ -87,6 +88,21 @@ export const AdminDocumentsPage: React.FC = () => {
     }
   };
 
+  const handleVerify = async (id: string, status: 'VERIFIED' | 'REJECTED') => {
+    try {
+      await apiRequest(`/documents/${id}/verify`, {
+        method: 'PUT',
+        body: JSON.stringify({ status }),
+      });
+      loadData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to update verification status');
+    }
+  };
+
+  const parishDocs = documents.filter((d) => !d.memberId && !d.category?.startsWith('BAPTISM'));
+  const memberUploads = documents.filter((d) => d.memberId || d.category?.startsWith('BAPTISM') || d.category?.startsWith('MARRIAGE') || d.category === 'MEMBER_SUBMISSION');
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -95,10 +111,10 @@ export const AdminDocumentsPage: React.FC = () => {
             File & Document Repository
           </span>
           <h1 className="font-serif text-2xl font-bold text-stone-900 mt-0.5">
-            Parish Documents
+            Parish Documents & Member Uploads
           </h1>
           <p className="text-xs text-stone-500 font-editorial">
-            Manage forms, certificates, financial reports, meeting minutes, and enforce role-based access rules.
+            Manage official forms, sacramental certificates, and review member-submitted records for register inclusion.
           </p>
         </div>
 
@@ -107,82 +123,200 @@ export const AdminDocumentsPage: React.FC = () => {
           className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-900 hover:bg-amber-950 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Upload Document</span>
+          <span>Upload Official Document</span>
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-stone-200 space-x-6 text-xs font-semibold">
+        <button
+          onClick={() => setActiveTab('PARISH_DOCS')}
+          className={`pb-3 border-b-2 flex items-center gap-2 cursor-pointer transition-colors ${
+            activeTab === 'PARISH_DOCS'
+              ? 'border-amber-900 text-amber-950'
+              : 'border-transparent text-stone-500 hover:text-stone-800'
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          <span>Official Parish Documents</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-stone-100 text-stone-700 font-mono">
+            {parishDocs.length}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('MEMBER_UPLOADS')}
+          className={`pb-3 border-b-2 flex items-center gap-2 cursor-pointer transition-colors ${
+            activeTab === 'MEMBER_UPLOADS'
+              ? 'border-amber-900 text-amber-950'
+              : 'border-transparent text-stone-500 hover:text-stone-800'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4" />
+          <span>Member Uploads & Submissions</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-100 text-amber-900 font-mono font-bold">
+            {memberUploads.length}
+          </span>
         </button>
       </div>
 
       <div className="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-stone-50 border-b border-stone-200 text-stone-500 uppercase tracking-wider text-[10px]">
-              <tr>
-                <th className="py-3 px-4">Title & Description</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">File Name</th>
-                <th className="py-3 px-4">Visibility Level</th>
-                <th className="py-3 px-4">Upload Date</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-stone-100 font-editorial">
-              {loading ? (
+        {activeTab === 'PARISH_DOCS' ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-stone-50 border-b border-stone-200 text-stone-500 uppercase tracking-wider text-[10px]">
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-stone-500">
-                    Loading document index...
-                  </td>
+                  <th className="py-3 px-4">Title & Description</th>
+                  <th className="py-3 px-4">Category</th>
+                  <th className="py-3 px-4">File Name</th>
+                  <th className="py-3 px-4">Visibility Level</th>
+                  <th className="py-3 px-4">Upload Date</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
-              ) : documents.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-stone-500">
-                    No documents listed.
-                  </td>
-                </tr>
-              ) : (
-                documents.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-stone-50/70 transition-colors">
-                    <td className="py-3.5 px-4">
-                      <span className="font-sans font-semibold text-stone-900 block">
-                        {doc.title}
-                      </span>
-                      <span className="text-[11px] text-stone-500 line-clamp-1">
-                        {doc.description}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 font-sans text-stone-700">
-                      {doc.category.replace('_', ' ')}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-stone-600">
-                      {doc.fileName} ({doc.fileSize})
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${
-                        doc.visibility === 'PUBLIC'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : doc.visibility === 'MEMBERS_ONLY'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {doc.visibility}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-stone-500">
-                      {doc.uploadDate}
-                    </td>
-                    <td className="py-3.5 px-4 text-right space-x-2">
-                      <button
-                        onClick={() => handleArchive(doc.id)}
-                        className="p-1.5 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-md cursor-pointer"
-                        title="Archive Document"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+              </thead>
+              <tbody className="divide-y divide-stone-100 font-editorial">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-stone-500">
+                      Loading document index...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : parishDocs.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-stone-500">
+                      No official documents listed.
+                    </td>
+                  </tr>
+                ) : (
+                  parishDocs.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-stone-50/70 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <span className="font-sans font-semibold text-stone-900 block">
+                          {doc.title}
+                        </span>
+                        <span className="text-[11px] text-stone-500 line-clamp-1">
+                          {doc.description}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-sans text-stone-700">
+                        {doc.category.replace(/_/g, ' ')}
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-stone-600">
+                        {doc.fileName} ({doc.fileSize})
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${
+                          doc.visibility === 'PUBLIC'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : doc.visibility === 'MEMBERS_ONLY'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {doc.visibility}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-stone-500">
+                        {doc.uploadDate}
+                      </td>
+                      <td className="py-3.5 px-4 text-right space-x-2">
+                        <button
+                          onClick={() => handleArchive(doc.id)}
+                          className="p-1.5 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-md cursor-pointer"
+                          title="Archive Document"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          /* MEMBER UPLOADS TAB */
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-stone-50 border-b border-stone-200 text-stone-500 uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="py-3 px-4">Submitted By</th>
+                  <th className="py-3 px-4">Document Title & Notes</th>
+                  <th className="py-3 px-4">Category</th>
+                  <th className="py-3 px-4">File Details</th>
+                  <th className="py-3 px-4">Verification Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-100 font-editorial">
+                {memberUploads.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-stone-500">
+                      No member-uploaded documents pending review.
+                    </td>
+                  </tr>
+                ) : (
+                  memberUploads.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-stone-50/70 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <span className="font-sans font-semibold text-stone-900 block">
+                          {doc.memberName || doc.uploadedBy}
+                        </span>
+                        <span className="text-[10px] text-stone-400 font-mono">
+                          ID: {doc.memberId || 'Parishioner'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className="font-sans font-semibold text-stone-900 block">
+                          {doc.title}
+                        </span>
+                        <span className="text-[11px] text-stone-500 line-clamp-2">
+                          {doc.description || doc.notes || 'No remarks provided'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-sans text-stone-700">
+                        <span className="px-2 py-0.5 rounded bg-stone-100 text-stone-800 text-[10px] font-semibold">
+                          {doc.category.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-stone-600">
+                        <div>{doc.fileName}</div>
+                        <div className="text-[10px] text-stone-400">{doc.fileSize} · {doc.uploadDate}</div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        {doc.verificationStatus === 'VERIFIED' ? (
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                            Verified
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                            Pending Verification
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-right space-x-2">
+                        {doc.verificationStatus !== 'VERIFIED' && (
+                          <button
+                            onClick={() => handleVerify(doc.id, 'VERIFIED')}
+                            className="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-[11px] font-semibold cursor-pointer"
+                          >
+                            Verify / Approve
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleArchive(doc.id)}
+                          className="p-1.5 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-md cursor-pointer"
+                          title="Remove Document"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Upload Modal */}

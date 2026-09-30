@@ -14,6 +14,9 @@ import {
   ChevronRight,
   Menu,
   X,
+  Clock,
+  FileText,
+  Settings as SettingsIcon,
 } from 'lucide-react';
 import churchLogo from '../../assets/church_logo.svg';
 
@@ -58,6 +61,21 @@ export const PriestLayout: React.FC<PriestLayoutProps> = ({
       label: 'Parish Members',
       path: '/priest/members',
       icon: Users,
+    },
+    {
+      label: 'Holy Qurbana Timings',
+      path: '/admin/holy-qurbana',
+      icon: Clock,
+    },
+    {
+      label: 'Parish Documents',
+      path: '/admin/documents',
+      icon: FileText,
+    },
+    {
+      label: 'Parish Settings',
+      path: '/admin/settings',
+      icon: SettingsIcon,
     },
   ];
 
