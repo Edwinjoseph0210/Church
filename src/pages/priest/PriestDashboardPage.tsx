@@ -187,9 +187,12 @@ export const PriestDashboardPage: React.FC<PriestDashboardPageProps> = ({ naviga
 
       {/* Overview Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs">
+        <div
+          onClick={() => navigate('/priest/members')}
+          className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs hover:border-amber-800 transition-all cursor-pointer group"
+        >
           <div className="flex items-center justify-between text-amber-900 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 group-hover:text-amber-900 transition-colors">
               Pending Registrations
             </span>
             <div className="p-2 rounded-xl bg-amber-50 border border-amber-200">
@@ -199,12 +202,15 @@ export const PriestDashboardPage: React.FC<PriestDashboardPageProps> = ({ naviga
           <div className="font-serif text-2xl font-bold text-stone-900">
             {summary?.pendingRegistrationsCount || 0}
           </div>
-          <p className="text-[10px] text-stone-500 mt-1">Awaiting priest verification</p>
+          <p className="text-[10px] text-stone-500 mt-1">Awaiting priest verification →</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs">
+        <div
+          onClick={() => navigate('/priest/members')}
+          className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs hover:border-emerald-700 transition-all cursor-pointer group"
+        >
           <div className="flex items-center justify-between text-emerald-800 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 group-hover:text-emerald-800 transition-colors">
               Approved Members
             </span>
             <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
@@ -214,12 +220,15 @@ export const PriestDashboardPage: React.FC<PriestDashboardPageProps> = ({ naviga
           <div className="font-serif text-2xl font-bold text-stone-900">
             {summary?.approvedMembersCount || 0}
           </div>
-          <p className="text-[10px] text-stone-500 mt-1">Active parish members</p>
+          <p className="text-[10px] text-stone-500 mt-1">Active parish members →</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs">
+        <div
+          onClick={() => navigate('/priest/members')}
+          className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs hover:border-blue-700 transition-all cursor-pointer group"
+        >
           <div className="flex items-center justify-between text-blue-800 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 group-hover:text-blue-800 transition-colors">
               Parish Families
             </span>
             <div className="p-2 rounded-xl bg-blue-50 border border-blue-200">
@@ -230,13 +239,16 @@ export const PriestDashboardPage: React.FC<PriestDashboardPageProps> = ({ naviga
             {summary?.totalFamiliesCount || 0}
           </div>
           <p className="text-[10px] text-stone-500 mt-1">
-            {summary?.totalApprovedFamiliesCount || 0} verified registers
+            {summary?.totalApprovedFamiliesCount || 0} verified registers →
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs">
+        <div
+          onClick={() => navigate('/priest/members')}
+          className="bg-white p-5 rounded-2xl border border-stone-200/90 shadow-xs hover:border-purple-700 transition-all cursor-pointer group"
+        >
           <div className="flex items-center justify-between text-purple-800 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 group-hover:text-purple-800 transition-colors">
               Pending Register Reviews
             </span>
             <div className="p-2 rounded-xl bg-purple-50 border border-purple-200">
@@ -246,7 +258,7 @@ export const PriestDashboardPage: React.FC<PriestDashboardPageProps> = ({ naviga
           <div className="font-serif text-2xl font-bold text-stone-900">
             {summary?.pendingFamilyReviewsCount || 0}
           </div>
-          <p className="text-[10px] text-stone-500 mt-1">Family censuses submitted</p>
+          <p className="text-[10px] text-stone-500 mt-1">Family censuses submitted →</p>
         </div>
       </div>
 

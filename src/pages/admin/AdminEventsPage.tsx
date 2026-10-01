@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/api';
 import { ParishEvent } from '../../types';
 import { Calendar, Plus, Edit, Trash2, X, Save, Clock, MapPin } from 'lucide-react';
+import { ChurchImagePicker } from '../../components/common/ChurchImagePicker';
 
 export const AdminEventsPage: React.FC = () => {
   const [events, setEvents] = useState<ParishEvent[]>([]);
@@ -338,6 +339,15 @@ export const AdminEventsPage: React.FC = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800"
+                />
+              </div>
+
+              <div>
+                <ChurchImagePicker
+                  selectedImageUrl={formData.imageUrl}
+                  onSelectImage={(url) => setFormData({ ...formData, imageUrl: url })}
+                  label="Event Photo (Optional)"
+                  helpText="Select a church photo from the 28-image library or choose No Photo for text-only."
                 />
               </div>
 

@@ -12,6 +12,8 @@ import {
   Users,
   Compass,
   AlertCircle,
+  User,
+  Megaphone,
   Phone,
   Navigation,
   ExternalLink,
@@ -61,7 +63,16 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const churchPhone = settings?.phone || '+91 97421 62172';
   const churchEmail = settings?.email || 'stmariamthresiaparish@gmail.com';
   const churchDiocese = settings?.diocese || 'Diocese of Hosur';
-  const heroImage = settings?.heroImageUrl || '/src/assets/images/holy_qurbana_altar_1790490159004.jpg';
+  
+  // 100% local static church interior, outdoor facade, and altar images with daily periodic rotation to guarantee publication loading
+  const rotatingHeroImages = [
+    '/images/holy_qurbana_altar_1790490159004.jpg', // Church Altar & Sanctuary Interior
+    '/images/hero_church_facade_1790490137085.jpg', // Church Outdoor Facade
+    '/images/parish_community_gathering_1790490173737.jpg', // Church Community & Prayer Gathering
+  ];
+
+  const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  const heroImage = rotatingHeroImages[dayOfYear % rotatingHeroImages.length];
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -73,9 +84,9 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
             src={heroImage}
             alt="St. Mariam Thresia Church sanctuary altar"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover object-center opacity-45 scale-105 transition-transform duration-1000 ease-out"
+            className="w-full h-full object-cover object-center opacity-85 scale-105 transition-transform duration-1000 ease-out"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/65 to-stone-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/40 to-stone-950/25" />
         </div>
 
         {/* Hero Content */}

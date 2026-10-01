@@ -14,7 +14,7 @@ export const AdminGalleryPage: React.FC = () => {
     title: '',
     description: '',
     category: 'Parish Feast',
-    coverImageUrl: '/src/assets/images/hero_church_facade_1790490137085.jpg',
+    coverImageUrl: '/images/hero_church_facade_1790490137085.jpg',
     isPublic: true,
     isPublished: true,
   });
@@ -44,7 +44,7 @@ export const AdminGalleryPage: React.FC = () => {
       title: '',
       description: '',
       category: 'Parish Feast',
-      coverImageUrl: '/src/assets/images/hero_church_facade_1790490137085.jpg',
+      coverImageUrl: '/images/hero_church_facade_1790490137085.jpg',
       isPublic: true,
       isPublished: true,
     });
@@ -328,7 +328,7 @@ export const AdminGalleryPage: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="/src/assets/images/... or image URL"
+                  placeholder="/images/... or image URL"
                   value={imageForm.imageUrl}
                   onChange={(e) => setImageForm({ ...imageForm, imageUrl: e.target.value })}
                   className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800"

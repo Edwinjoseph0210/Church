@@ -39,7 +39,7 @@ export const AdminSettingsPage: React.FC = () => {
         officeHours: settings.officeHours || 'Monday - Saturday: 9:00 AM - 1:00 PM, 4:00 PM - 7:00 PM',
         website: settings.website || 'https://stmariamthresia.church',
         heroTagline: settings.heroTagline || 'United in Faith. Growing in Love. Serving Together.',
-        heroImageUrl: settings.heroImageUrl || '/src/assets/images/holy_qurbana_altar_1790490159004.jpg',
+        heroImageUrl: settings.heroImageUrl || '/images/holy_qurbana_altar_1790490159004.jpg',
         aboutHistory: settings.aboutHistory || '[PARISH HISTORY TO BE ADDED]',
         missionStatement: settings.missionStatement || '',
         visionStatement: settings.visionStatement || '',
@@ -250,7 +250,7 @@ export const AdminSettingsPage: React.FC = () => {
               type="text"
               value={formData.heroImageUrl}
               onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
-              placeholder="/src/assets/images/... or public image URL"
+              placeholder="/images/... or public image URL"
               className="w-full px-3 py-2 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800 font-mono text-xs"
             />
             {formData.heroImageUrl && (

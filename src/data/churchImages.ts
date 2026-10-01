@@ -18,8 +18,8 @@ export const CHURCH_IMAGE_LIBRARY: ChurchImageItem[] = [
     id: 'img-altar-local',
     title: 'St. Mariam Thresia Church Altar',
     category: 'Altar & Sanctuary',
-    url: '/src/assets/images/holy_qurbana_altar_1790490159004.jpg',
-    thumbnail: '/src/assets/images/holy_qurbana_altar_1790490159004.jpg',
+    url: '/images/holy_qurbana_altar_1790490159004.jpg',
+    thumbnail: '/images/holy_qurbana_altar_1790490159004.jpg',
   },
   {
     id: 'img-chalice-host',
@@ -74,8 +74,8 @@ export const CHURCH_IMAGE_LIBRARY: ChurchImageItem[] = [
     id: 'img-church-facade-local',
     title: 'St. Mariam Thresia Church Facade',
     category: 'Church & Architecture',
-    url: '/src/assets/images/hero_church_facade_1790490137085.jpg',
-    thumbnail: '/src/assets/images/hero_church_facade_1790490137085.jpg',
+    url: '/images/hero_church_facade_1790490137085.jpg',
+    thumbnail: '/images/hero_church_facade_1790490137085.jpg',
   },
   {
     id: 'img-belfry-tower',
@@ -95,8 +95,8 @@ export const CHURCH_IMAGE_LIBRARY: ChurchImageItem[] = [
     id: 'img-parish-gathering-local',
     title: 'Parish Community Gathering',
     category: 'Prayer & Fellowship',
-    url: '/src/assets/images/parish_community_gathering_1790490173737.jpg',
-    thumbnail: '/src/assets/images/parish_community_gathering_1790490173737.jpg',
+    url: '/images/parish_community_gathering_1790490173737.jpg',
+    thumbnail: '/images/parish_community_gathering_1790490173737.jpg',
   },
   {
     id: 'img-sacred-heart',

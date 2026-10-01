@@ -826,7 +826,7 @@ apiRouter.post(
       title,
       description: description || '',
       category: category || 'General',
-      coverImageUrl: coverImageUrl || '/src/assets/images/hero_church_facade_1790490137085.jpg',
+      coverImageUrl: coverImageUrl || '/images/hero_church_facade_1790490137085.jpg',
       isPublic: isPublic !== undefined ? Boolean(isPublic) : true,
       isPublished: isPublished !== undefined ? Boolean(isPublished) : true,
       createdAt: new Date().toISOString(),

@@ -33,6 +33,8 @@ import { PriestFamilyViewPage } from './pages/priest/PriestFamilyViewPage';
 import { AdminHolyQurbanaPage } from './pages/admin/AdminHolyQurbanaPage';
 import { AdminDocumentsPage } from './pages/admin/AdminDocumentsPage';
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
+import { AdminAnnouncementsPage } from './pages/admin/AdminAnnouncementsPage';
+import { AdminEventsPage } from './pages/admin/AdminEventsPage';
 
 import { ShieldAlert, ArrowLeft, LogIn } from 'lucide-react';
 
@@ -157,7 +159,23 @@ function AppContent() {
       );
     }
 
-    // Holy Qurbana Timings Management: /admin/holy-qurbana or /priest/holy-qurbana
+    // Announcements Management: /admin/announcements
+    if (currentPath === '/admin/announcements') {
+      return (
+        <PriestLayout currentPath="/admin/announcements" navigate={navigate}>
+          <AdminAnnouncementsPage />
+        </PriestLayout>
+      );
+    }
+
+    // Events Management: /admin/events
+    if (currentPath === '/admin/events') {
+      return (
+        <PriestLayout currentPath="/admin/events" navigate={navigate}>
+          <AdminEventsPage />
+        </PriestLayout>
+      );
+    }
     if (currentPath === '/admin/holy-qurbana' || currentPath === '/priest/holy-qurbana') {
       return (
         <PriestLayout currentPath="/admin/holy-qurbana" navigate={navigate}>

@@ -7,6 +7,7 @@ import {
   AlertCircle,
   BookOpen,
   Printer,
+  Download,
   ShieldCheck,
   UserCheck,
   Calendar,
@@ -115,6 +116,295 @@ export const PriestFamilyViewPage: React.FC<PriestFamilyViewPageProps> = ({
     window.print();
   };
 
+  const handleDownloadFamilyDetails = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow popups for this website to print / export the PDF register.');
+      return;
+    }
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Parish Membership Register - ${fam?.familyName || 'Family'} - Diocese of Hosur</title>
+        <style>
+          @page {
+            size: A4 landscape;
+            margin: 10mm;
+          }
+          body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9.5pt;
+            color: #000;
+            background: #fff;
+            margin: 0;
+            padding: 10px;
+            line-height: 1.3;
+          }
+          .form-container {
+            border: 2px solid #000;
+            padding: 16px;
+            max-width: 1120px;
+            margin: 0 auto;
+          }
+          .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            position: relative;
+          }
+          .diocese-title {
+            font-size: 13pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+          .register-title {
+            font-size: 11pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 2px;
+          }
+          .form-no-box {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border: 1px solid #000;
+            padding: 3px 10px;
+            font-weight: bold;
+            font-size: 9.5pt;
+          }
+          .sub-box {
+            position: absolute;
+            top: 30px;
+            right: 0;
+            border: 1px solid #000;
+            padding: 3px 10px;
+            font-size: 8.5pt;
+          }
+          .row {
+            display: flex;
+            margin-bottom: 6px;
+            border-bottom: 1px dotted #555;
+            padding-bottom: 3px;
+            font-size: 9pt;
+          }
+          .field {
+            flex: 1;
+            margin-right: 12px;
+          }
+          .field label {
+            font-weight: bold;
+            margin-right: 4px;
+          }
+          .field span {
+            border-bottom: 1px solid #000;
+            padding-bottom: 1px;
+          }
+          .checkbox-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 9pt;
+          }
+          .checkbox {
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            border: 1px solid #000;
+            text-align: center;
+            line-height: 11px;
+            font-size: 8.5pt;
+            font-weight: bold;
+            margin-right: 3px;
+          }
+          table.census {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 8.5pt;
+          }
+          table.census th, table.census td {
+            border: 1px solid #000;
+            padding: 5px 4px;
+            text-align: center;
+            vertical-align: middle;
+          }
+          table.census th {
+            background: #f0f0f0;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 8pt;
+          }
+          table.census td:nth-child(2) {
+            text-align: left;
+            font-weight: bold;
+          }
+          .footer-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 9pt;
+          }
+          .remarks-box {
+            flex: 1;
+            border: 1px solid #000;
+            padding: 6px;
+            min-height: 35px;
+            margin-right: 15px;
+          }
+          .signature-area {
+            text-align: center;
+            width: 220px;
+          }
+          .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 25px;
+            padding-top: 3px;
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="form-container">
+          <div class="header">
+            <div class="diocese-title">Diocese of Hosur</div>
+            <div class="register-title">Parish Membership Register (Aatmasthithi Book)</div>
+            <div style="font-size: 9pt; font-style: italic; margin-top: 1px;">St. Mariam Thresia Church, Chengalpattu</div>
+            <div class="form-no-box">No: ${fam?.familyNumber || fam?.registerFolioNumber || '2'}</div>
+            <div class="sub-box">Monthly Sub: ${fam?.monthlySubscription || '₹500'}</div>
+          </div>
+
+          <div class="row">
+            <div class="field" style="flex: 2;">
+              <label>Name of Head of the Family:</label>
+              <span><strong>${fam?.headOfFamilyName || '—'}</strong></span>
+            </div>
+            <div class="field" style="flex: 1;">
+              <label>Mobile No.:</label>
+              <span>${fam?.mobileNumber || fam?.contactPhone || '—'}</span>
+            </div>
+            <div class="field" style="flex: 2;">
+              <label>Address:</label>
+              <span>${fam?.address || '—'}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field" style="flex: 2;">
+              <label>Family Name (House):</label>
+              <span><strong>${fam?.familyName || '—'}</strong></span>
+            </div>
+            <div class="field" style="flex: 1;">
+              <label>Landline No.:</label>
+              <span>${fam?.landline || '—'}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field" style="flex: 2;">
+              <label>Family Unit Name:</label>
+              <span>${fam?.familyUnitName || fam?.wardOrUnit || '—'}</span>
+            </div>
+            <div class="field" style="flex: 1;">
+              <label>Ward No.:</label>
+              <span>${fam?.wardNumber || 'Ward 1'}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field" style="flex: 2;">
+              <label>Transferred Parish:</label>
+              <span>${fam?.nativeParish || fam?.transferredParish || '—'}</span>
+            </div>
+            <div class="field" style="flex: 1;">
+              <label>Date:</label>
+              <span>${fam?.transferDate || fam?.verifiedDate || '—'}</span>
+            </div>
+            <div class="field" style="flex: 2;">
+              <label>Parish Transfer Register No.:</label>
+              <span>${fam?.parishTransferRegisterNumber || '—'}</span>
+            </div>
+          </div>
+
+          <div class="checkbox-group">
+            <div>Church Tradition:</div>
+            <div><span class="checkbox">${(fam?.churchTradition || '').toLowerCase().includes('syro') ? 'X' : ''}</span> Syro Malabar</div>
+            <div><span class="checkbox">${(fam?.churchTradition || '').toLowerCase().includes('latin') ? 'X' : ''}</span> Latin</div>
+            <div><span class="checkbox">${(fam?.churchTradition || '').toLowerCase().includes('malankara') ? 'X' : ''}</span> Syro Malankara</div>
+            <div><span class="checkbox"></span> Others</div>
+            <div style="margin-left: 15px;">Diocese in Kerala: <strong>${fam?.dioceseInKerala || 'Eparchy of Palai'}</strong></div>
+          </div>
+
+          <table class="census">
+            <thead>
+              <tr>
+                <th style="width: 4%;">Sl. No.</th>
+                <th style="width: 17%;">Names of Family Members</th>
+                <th style="width: 12%;">Relationship with the Head</th>
+                <th style="width: 9%;">Date of Birth</th>
+                <th style="width: 9%;">Baptism</th>
+                <th style="width: 10%;">First Holy Communion</th>
+                <th style="width: 9%;">Confirmation</th>
+                <th style="width: 10%;">Marriage / Ordination</th>
+                <th style="width: 11%;">Profession</th>
+                <th style="width: 9%;">Death</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${familyMembers.map((m, idx) => `
+                <tr>
+                  <td>${idx + 1}</td>
+                  <td>${m.fullName || `${m.firstName} ${m.lastName}`}</td>
+                  <td>${m.relationshipWithHead || m.relationshipToHead || 'Member'}</td>
+                  <td>${m.dateOfBirth || '—'}</td>
+                  <td>${m.baptismDate || '—'}</td>
+                  <td>${m.firstHolyCommunionDate || m.firstCommunionConfirmationDate || '—'}</td>
+                  <td>${m.confirmationDate || '—'}</td>
+                  <td>${m.marriageOrdinationDate || m.marriageDate || '—'}</td>
+                  <td>${m.profession || m.occupation || '—'}</td>
+                  <td>${m.dateOfDeath || '—'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="footer-section">
+            <div class="remarks-box">
+              <strong>Remarks of Parish Priest:</strong><br>
+              <span style="font-size: 8.5pt; color: #333;">${fam?.verificationNotes || 'Official family register verified and recorded in canonical communion with the Diocese of Hosur.'}</span>
+              <div style="margin-top: 6px; font-size: 8pt;">
+                <span class="checkbox">${fam?.houseOwnership === 'OWNED' ? 'X' : ''}</span> OWN HOUSE &nbsp;&nbsp;&nbsp;
+                <span class="checkbox">${fam?.houseOwnership === 'RENTED' ? 'X' : ''}</span> RENTED HOUSE &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                FREQUENCY: EVERY WEEK <span class="checkbox">X</span> BI WEEK <span class="checkbox"></span> FOR FEASTS <span class="checkbox"></span>
+              </div>
+            </div>
+            <div class="signature-area">
+              <div class="signature-line">Fr. Joshy N George</div>
+              <div style="font-size: 8.5pt; font-weight: bold; margin-top: 2px;">Parish Priest / Vicar & Seal</div>
+            </div>
+          </div>
+        </div>
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 300);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
   if (loading) {
     return (
       <div className="bg-white rounded-2xl p-12 text-center border border-stone-200">
@@ -174,6 +464,14 @@ export const PriestFamilyViewPage: React.FC<PriestFamilyViewPageProps> = ({
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Print Ledger</span>
+          </button>
+
+          <button
+            onClick={handleDownloadFamilyDetails}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-900 hover:bg-amber-950 text-white rounded-xl text-xs font-semibold shadow-xs cursor-pointer transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Download Family Details</span>
           </button>
 
           <button

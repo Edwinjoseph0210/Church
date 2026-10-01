@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../services/api';
-import { Announcement, Organization } from '../../types';
+import { Announcement } from '../../types';
 import { Megaphone, Plus, Edit, Trash2, X, Save, AlertCircle, Calendar } from 'lucide-react';
+import { ChurchImagePicker } from '../../components/common/ChurchImagePicker';
 
 export const AdminAnnouncementsPage: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalMode, setModalMode] = useState<'CREATE' | 'EDIT' | null>(null);
   const [selectedItem, setSelectedItem] = useState<Announcement | null>(null);
@@ -37,14 +37,12 @@ export const AdminAnnouncementsPage: React.FC = () => {
     imageUrl: '',
   });
 
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
   const loadData = async () => {
     try {
-      const [aRes, oRes] = await Promise.all([
-        apiRequest<Announcement[]>('/announcements'),
-        apiRequest<Organization[]>('/organizations'),
-      ]);
+      const aRes = await apiRequest<Announcement[]>('/announcements');
       setAnnouncements(aRes);
-      setOrganizations(oRes);
     } catch (err) {
       console.error('Failed to load announcements:', err);
     } finally {
@@ -117,9 +115,9 @@ export const AdminAnnouncementsPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this announcement?')) return;
     try {
       await apiRequest(`/announcements/${id}`, { method: 'DELETE' });
+      setDeleteConfirmId(null);
       loadData();
     } catch (err: any) {
       alert(err.message || 'Failed to delete');
@@ -213,21 +211,41 @@ export const AdminAnnouncementsPage: React.FC = () => {
                         {a.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right space-x-2">
-                      <button
-                        onClick={() => openEdit(a)}
-                        className="p-1.5 text-stone-600 hover:text-amber-900 hover:bg-stone-100 rounded-md cursor-pointer"
-                        title="Edit Announcement"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(a.id)}
-                        className="p-1.5 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-md cursor-pointer"
-                        title="Delete Announcement"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <td className="py-3.5 px-4 text-right">
+                      {deleteConfirmId === a.id ? (
+                        <div className="flex items-center justify-end gap-1.5">
+                          <span className="text-[10px] text-red-600 font-semibold">Delete?</span>
+                          <button
+                            onClick={() => handleDelete(a.id)}
+                            className="px-2 py-0.5 bg-red-600 text-white rounded text-[10px] font-semibold hover:bg-red-700 cursor-pointer"
+                          >
+                            Yes
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirmId(null)}
+                            className="px-2 py-0.5 bg-stone-200 text-stone-700 rounded text-[10px] font-semibold hover:bg-stone-300 cursor-pointer"
+                          >
+                            No
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => openEdit(a)}
+                            className="p-1.5 text-stone-600 hover:text-amber-900 hover:bg-stone-100 rounded-md cursor-pointer"
+                            title="Edit Announcement"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirmId(a.id)}
+                            className="p-1.5 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-md cursor-pointer"
+                            title="Delete Announcement"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -297,30 +315,11 @@ export const AdminAnnouncementsPage: React.FC = () => {
                   >
                     <option value="PUBLIC">Public (All Visitors)</option>
                     <option value="MEMBERS">Parish Members Only</option>
-                    <option value="SPECIFIC_ORGANIZATION">Specific Organization</option>
                   </select>
                 </div>
               </div>
 
-              {formData.audience === 'SPECIFIC_ORGANIZATION' && (
-                <div>
-                  <label className="block font-semibold text-stone-700 mb-1">
-                    Select Target Organization
-                  </label>
-                  <select
-                    value={formData.organizationId}
-                    onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800"
-                  >
-                    <option value="">Select organization...</option>
-                    {organizations.map((org) => (
-                      <option key={org.id} value={org.id}>
-                        {org.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
+
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -359,6 +358,15 @@ export const AdminAnnouncementsPage: React.FC = () => {
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800"
+                />
+              </div>
+
+              <div>
+                <ChurchImagePicker
+                  selectedImageUrl={formData.imageUrl}
+                  onSelectImage={(url) => setFormData({ ...formData, imageUrl: url })}
+                  label="Announcement Photo (Optional)"
+                  helpText="Select a church photo from the 28-image library or choose No Photo for text-only."
                 />
               </div>
 
