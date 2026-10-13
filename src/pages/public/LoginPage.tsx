@@ -51,8 +51,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
 
   // Forgot Password Modal State
   const [showForgot, setShowForgot] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotStatus, setForgotStatus] = useState<string | null>(null);
+  const [forgotStep, setForgotStep] = useState<'REQUEST' | 'VERIFY'>('REQUEST');
+  const [forgotIdentifier, setForgotIdentifier] = useState('');
+  const [forgotOtp, setForgotOtp] = useState('');
+  const [forgotNewPassword, setForgotNewPassword] = useState('');
+  const [forgotConfirmPassword, setForgotConfirmPassword] = useState('');
+  const [forgotMessage, setForgotMessage] = useState<string | null>(null);
+  const [forgotError, setForgotError] = useState<string | null>(null);
+  const [forgotSubmitting, setForgotSubmitting] = useState(false);
 
   // If already logged in, show direct portal button
   if (user) {
@@ -153,31 +159,76 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
     }
   };
 
-  const handleDemoClick = async (role: 'priest' | 'member1' | 'member2' | 'pending') => {
-    setSubmitting(true);
-    setError(null);
+  const handleRequestOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError(null);
+    setForgotMessage(null);
+    setForgotSubmitting(true);
     try {
-      await quickLoginAs(role);
-      const dest = role === 'priest' ? '/priest/dashboard' : '/member/dashboard';
-      navigate(dest);
+      const res = await apiRequest<{
+        success: boolean;
+        email: string;
+        phone: string;
+        otp: string;
+        message: string;
+      }>('/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ emailOrPhone: forgotIdentifier }),
+      });
+      setForgotMessage(`OTP sent successfully via Email to ${res.email} and SMS to ${res.phone}. (OTP Code for testing: ${res.otp})`);
+      setForgotStep('VERIFY');
     } catch (err: any) {
-      setError(err.message || 'Failed demo login');
+      setForgotError(err.message || 'No registered account found with this email or phone number.');
     } finally {
-      setSubmitting(false);
+      setForgotSubmitting(false);
     }
   };
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
+  const handleVerifyAndReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    setForgotStatus(null);
+    setForgotError(null);
+    if (forgotNewPassword !== forgotConfirmPassword) {
+      setForgotError('New passwords do not match.');
+      return;
+    }
+    if (forgotNewPassword.length < 6) {
+      setForgotError('Password must be at least 6 characters.');
+      return;
+    }
+    setForgotSubmitting(true);
     try {
-      const res = await apiRequest<{ message: string }>('/auth/forgot-password', {
+      const res = await apiRequest<{ message: string; user?: any }>('/auth/reset-password-otp', {
         method: 'POST',
-        body: JSON.stringify({ email: forgotEmail }),
+        body: JSON.stringify({
+          emailOrPhone: forgotIdentifier,
+          otp: forgotOtp,
+          newPassword: forgotNewPassword,
+        }),
       });
-      setForgotStatus(res.message);
+      setForgotMessage(res.message);
+
+      if (res.user) {
+        await login(res.user.email || forgotIdentifier, forgotNewPassword);
+      }
+
+      setTimeout(() => {
+        setShowForgot(false);
+        setForgotStep('REQUEST');
+        setForgotIdentifier('');
+        setForgotOtp('');
+        setForgotNewPassword('');
+        setForgotConfirmPassword('');
+        setForgotMessage(null);
+
+        if (res.user) {
+          const dest = (res.user.role === 'PRIEST' || res.user.role === 'ADMIN') ? '/priest/dashboard' : '/member/dashboard';
+          navigate(dest);
+        }
+      }, 1500);
     } catch (err: any) {
-      setForgotStatus(err.message || 'Error requesting password reset.');
+      setForgotError(err.message || 'Failed to verify OTP and reset password.');
+    } finally {
+      setForgotSubmitting(false);
     }
   };
 
@@ -275,7 +326,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
                     <input
                       type="text"
                       required
-                      placeholder="e.g. admin, member1, member2"
+                      placeholder="Enter your registered email or username"
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       className="w-full pl-9 pr-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
@@ -301,7 +352,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
                     <input
                       type="password"
                       required
-                      placeholder="e.g. admin123 or member123"
+                      placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full pl-9 pr-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
@@ -489,124 +540,150 @@ export const LoginPage: React.FC<LoginPageProps> = ({ navigate, initialMode = 'L
               )}
             </div>
           )}
-
-          {/* Simple Login ID & Password Reference Cards (1-Click Auto-Fill & Test) */}
-          <div className="pt-4 border-t border-stone-200">
-            <span className="block text-[11px] uppercase tracking-wider text-stone-500 font-semibold text-center mb-2.5">
-              Simple Demo Login Credentials
-            </span>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px]">
-              {/* Admin */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIdentifier('admin');
-                  setPassword('admin123');
-                  handleDemoClick('priest');
-                }}
-                className="p-3 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 rounded-xl font-medium text-left cursor-pointer transition-all shadow-xs"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-xs text-amber-900">Admin</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-900 font-mono">1-Click</span>
-                </div>
-                <div className="text-[11px] text-stone-600 space-y-0.5 font-mono">
-                  <div>ID: <strong className="text-stone-900">admin</strong></div>
-                  <div>PW: <strong className="text-stone-900">admin123</strong></div>
-                </div>
-                <span className="text-[10px] text-amber-800/80 block mt-1">Parish Vicar / Admin</span>
-              </button>
-
-              {/* Demo Member 1 */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIdentifier('member1');
-                  setPassword('member123');
-                  handleDemoClick('member1');
-                }}
-                className="p-3 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 rounded-xl font-medium text-left cursor-pointer transition-all shadow-xs"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-xs text-stone-900">Member 1</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 font-mono">1-Click</span>
-                </div>
-                <div className="text-[11px] text-stone-600 space-y-0.5 font-mono">
-                  <div>ID: <strong className="text-stone-900">member1</strong></div>
-                  <div>PW: <strong className="text-stone-900">member123</strong></div>
-                </div>
-                <span className="text-[10px] text-stone-500 block mt-1 truncate">John Demo · Palackal</span>
-              </button>
-
-              {/* Demo Member 2 */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIdentifier('member2');
-                  setPassword('member123');
-                  handleDemoClick('member2');
-                }}
-                className="p-3 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-200 rounded-xl font-medium text-left cursor-pointer transition-all shadow-xs"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-xs text-stone-900">Member 2</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-200 text-stone-700 font-mono">1-Click</span>
-                </div>
-                <div className="text-[11px] text-stone-600 space-y-0.5 font-mono">
-                  <div>ID: <strong className="text-stone-900">member2</strong></div>
-                  <div>PW: <strong className="text-stone-900">member123</strong></div>
-                </div>
-                <span className="text-[10px] text-stone-500 block mt-1 truncate">Thomas Demo · Nazareth</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Forgot Password Modal */}
+      {/* Forgot Password Modal with Email & SMS OTP verification */}
       {showForgot && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-stone-200 space-y-4">
             <h3 className="font-serif text-lg font-bold text-stone-900">
-              Reset Portal Password
+              Reset Password via OTP (Email & SMS)
             </h3>
             <p className="text-xs text-stone-600 font-editorial">
-              Enter your registered parish email address. The parish office will receive the audit request to reset your credentials.
+              {forgotStep === 'REQUEST'
+                ? 'Enter your registered parish email address or mobile number. We will check our records and send a 6-digit OTP to your mail ID and SMS.'
+                : 'Enter the 6-digit OTP code sent to your registered mail ID and phone number, along with your new password.'}
             </p>
 
-            {forgotStatus && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-800 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>{forgotStatus}</span>
+            {forgotMessage && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-start gap-2 leading-relaxed">
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                <span>{forgotMessage}</span>
               </div>
             )}
 
-            <form onSubmit={handleForgotPassword} className="space-y-3">
-              <input
-                type="email"
-                required
-                placeholder="registered.email@church.org"
-                value={forgotEmail}
-                onChange={(e) => setForgotEmail(e.target.value)}
-                className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
-              />
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowForgot(false)}
-                  className="px-3 py-1.5 text-xs text-stone-600 hover:bg-stone-100 rounded-md cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 bg-amber-900 hover:bg-amber-950 text-white rounded-md text-xs font-semibold cursor-pointer"
-                >
-                  Submit Request
-                </button>
+            {forgotError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                <span>{forgotError}</span>
               </div>
-            </form>
+            )}
+
+            {forgotStep === 'REQUEST' ? (
+              <form onSubmit={handleRequestOtp} className="space-y-3.5">
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Registered Email or Mobile Number
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. member@church.org or +91 8807188445"
+                    value={forgotIdentifier}
+                    onChange={(e) => setForgotIdentifier(e.target.value)}
+                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
+                  />
+                </div>
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgot(false);
+                      setForgotStep('REQUEST');
+                      setForgotMessage(null);
+                      setForgotError(null);
+                    }}
+                    className="px-3 py-1.5 text-xs text-stone-600 hover:bg-stone-100 rounded-md cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={forgotSubmitting}
+                    className="px-4 py-1.5 bg-amber-900 hover:bg-amber-950 text-white rounded-md text-xs font-semibold cursor-pointer disabled:opacity-50"
+                  >
+                    {forgotSubmitting ? 'Checking Account...' : 'Send OTP via Email & SMS'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyAndReset} className="space-y-3.5">
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    6-Digit OTP Code
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    placeholder="Enter 6-digit OTP"
+                    value={forgotOtp}
+                    onChange={(e) => setForgotOtp(e.target.value)}
+                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs font-mono tracking-widest focus:outline-none focus:border-amber-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    New Password (Min 6 Characters)
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="New password"
+                    value={forgotNewPassword}
+                    onChange={(e) => setForgotNewPassword(e.target.value)}
+                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Confirm new password"
+                    value={forgotConfirmPassword}
+                    onChange={(e) => setForgotConfirmPassword(e.target.value)}
+                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-amber-800"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setForgotStep('REQUEST')}
+                    className="text-xs text-amber-900 hover:underline cursor-pointer"
+                  >
+                    ← Change Email / Phone
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowForgot(false);
+                        setForgotStep('REQUEST');
+                        setForgotMessage(null);
+                        setForgotError(null);
+                      }}
+                      className="px-3 py-1.5 text-xs text-stone-600 hover:bg-stone-100 rounded-md cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={forgotSubmitting}
+                      className="px-4 py-1.5 bg-amber-900 hover:bg-amber-950 text-white rounded-md text-xs font-semibold cursor-pointer disabled:opacity-50"
+                    >
+                      {forgotSubmitting ? 'Verifying...' : 'Verify OTP & Reset Password'}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

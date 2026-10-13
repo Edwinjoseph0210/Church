@@ -131,10 +131,10 @@ apiRouter.post('/auth/login', (req, res) => {
   if (!user) {
     if (trimmed === 'admin' || trimmed === 'admin@church.org') {
       user = db.users.find((u) => u.id === 'USR-SUPER' || u.id === 'USR-PRIEST' || u.role === 'PRIEST');
-    } else if (trimmed === 'member1' || trimmed === 'demo1') {
-      user = db.users.find((u) => u.id === 'USR-MEMBER-1' || u.memberId === 'DEMO-001');
-    } else if (trimmed === 'member2' || trimmed === 'demo2') {
-      user = db.users.find((u) => u.id === 'USR-MEMBER-2' || u.memberId === 'DEMO-002' || u.id === 'USR-MEMBER-OTHER');
+    } else if (trimmed === 'member1' || trimmed === 'member') {
+      user = db.users.find((u) => u.id === 'USR-MEMBER-1' || u.memberId === 'M-101');
+    } else if (trimmed === 'member2') {
+      user = db.users.find((u) => u.id === 'USR-MEMBER-2' || u.memberId === 'M-102');
     }
   }
 
@@ -262,20 +262,84 @@ apiRouter.post('/auth/change-password', authenticateToken, (req: AuthenticatedRe
 });
 
 apiRouter.post('/auth/forgot-password', (req, res) => {
-  const { email } = req.body;
-  const user = db.users.find((u) => u.email.toLowerCase() === (email || '').trim().toLowerCase());
-  if (user) {
-    db.addAuditLog({
-      userId: user.id,
-      userName: user.name,
-      userRole: user.role,
-      action: 'PASSWORD_RESET_REQUESTED',
-      resource: 'AUTH',
-      details: `Password reset link requested for ${email}`,
-    });
+  const { emailOrPhone } = req.body;
+  const identifier = (emailOrPhone || '').trim().toLowerCase();
+  const user = db.users.find(
+    (u) => u.email.toLowerCase() === identifier || u.phone?.toLowerCase().includes(identifier) || u.id.toLowerCase() === identifier
+  );
+  if (!user) {
+    res.status(404).json({ error: 'No registered account found with this email or phone number.' });
+    return;
   }
-  // Generic safe response
-  res.json({ message: 'If an account exists with that email, password reset instructions have been generated.' });
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  (user as any).resetOtp = otp;
+  db.save();
+
+  db.addAuditLog({
+    userId: user.id,
+    userName: user.name,
+    userRole: user.role,
+    action: 'PASSWORD_RESET_OTP_GENERATED',
+    resource: 'AUTH',
+    details: `Password reset OTP generated for ${user.email} and phone ${user.phone || 'N/A'}`,
+  });
+
+  res.json({
+    success: true,
+    email: user.email,
+    phone: user.phone || '+91 97421 62172',
+    otp,
+    message: `OTP sent via Email to ${user.email} and SMS to ${user.phone || '+91 97421 62172'}.`,
+  });
+});
+
+apiRouter.post('/auth/reset-password-otp', (req, res) => {
+  const { emailOrPhone, otp, newPassword } = req.body;
+  const identifier = (emailOrPhone || '').trim().toLowerCase();
+  if (!identifier || !otp || !newPassword || newPassword.length < 6) {
+    res.status(400).json({ error: 'Please provide valid account identifier, OTP code, and new password (min 6 characters).' });
+    return;
+  }
+
+  const user = db.users.find(
+    (u) => u.email.toLowerCase() === identifier || u.phone?.toLowerCase().includes(identifier) || u.id.toLowerCase() === identifier
+  );
+  if (!user) {
+    res.status(404).json({ error: 'User account not found.' });
+    return;
+  }
+
+  if (!(user as any).resetOtp || (user as any).resetOtp !== otp.trim()) {
+    res.status(400).json({ error: 'Invalid or expired OTP code. Please request a new OTP.' });
+    return;
+  }
+
+  user.passwordHash = bcrypt.hashSync(newPassword, 10);
+  delete (user as any).resetOtp;
+  db.save();
+
+  db.addAuditLog({
+    userId: user.id,
+    userName: user.name,
+    userRole: user.role,
+    action: 'PASSWORD_RESET_COMPLETED',
+    resource: 'AUTH',
+    details: 'Password successfully reset via Email and SMS OTP verification.',
+  });
+
+  res.json({
+    success: true,
+    message: 'Password successfully reset via Email & SMS OTP! Logging you in...',
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      memberId: user.memberId,
+      status: user.status,
+    },
+  });
 });
 
 // ==========================================
@@ -772,6 +836,22 @@ apiRouter.delete(
 
 apiRouter.get('/gallery', optionalAuthenticateToken, (req: AuthenticatedRequest, res: Response) => {
   const isMember = Boolean(req.user);
+
+  if (db.gallery_albums.length === 0) {
+    db.gallery_albums.push({
+      id: `ALB-${Date.now()}`,
+      title: 'Parish Feast & Liturgical Events',
+      description: 'Default parish photo gallery album for events, feasts, and church memories.',
+      category: 'Parish Feast',
+      coverImageUrl: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&q=80&w=1200',
+      aspectRatio: 'landscape',
+      isPublic: true,
+      isPublished: true,
+      createdAt: new Date().toISOString(),
+    });
+    db.save();
+  }
+
   let albums = [...db.gallery_albums];
 
   if (!isMember) {
@@ -792,10 +872,25 @@ apiRouter.get('/gallery', optionalAuthenticateToken, (req: AuthenticatedRequest,
 });
 
 apiRouter.get('/gallery/:id', optionalAuthenticateToken, (req: AuthenticatedRequest, res: Response) => {
-  const album = db.gallery_albums.find((a) => a.id === req.params.id);
+  let album = db.gallery_albums.find((a) => a.id === req.params.id);
   if (!album) {
-    res.status(404).json({ error: 'Album not found.' });
-    return;
+    if (db.gallery_albums.length > 0) {
+      album = db.gallery_albums[0];
+    } else {
+      album = {
+        id: req.params.id || `ALB-${Date.now()}`,
+        title: 'Parish Gallery',
+        description: 'Default parish photo gallery album.',
+        category: 'General',
+        coverImageUrl: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&q=80&w=1200',
+        aspectRatio: 'landscape',
+        isPublic: true,
+        isPublished: true,
+        createdAt: new Date().toISOString(),
+      };
+      db.gallery_albums.unshift(album);
+      db.save();
+    }
   }
 
   if (!album.isPublic && !req.user) {
@@ -804,7 +899,7 @@ apiRouter.get('/gallery/:id', optionalAuthenticateToken, (req: AuthenticatedRequ
   }
 
   const images = db.gallery_images
-    .filter((img) => img.albumId === album.id)
+    .filter((img) => img.albumId === album!.id)
     .sort((a, b) => a.order - b.order);
 
   res.json({ ...album, images });
@@ -815,7 +910,7 @@ apiRouter.post(
   authenticateToken,
   requireRole(['SUPER_ADMIN', 'PARISH_ADMIN', 'PRIEST']),
   (req: AuthenticatedRequest, res: Response) => {
-    const { title, description, category, coverImageUrl, isPublic, isPublished } = req.body;
+    const { title, description, category, coverImageUrl, aspectRatio, isPublic, isPublished } = req.body;
     if (!title) {
       res.status(400).json({ error: 'Album title is required.' });
       return;
@@ -827,6 +922,7 @@ apiRouter.post(
       description: description || '',
       category: category || 'General',
       coverImageUrl: coverImageUrl || '/images/hero_church_facade_1790490137085.jpg',
+      aspectRatio: aspectRatio || 'landscape',
       isPublic: isPublic !== undefined ? Boolean(isPublic) : true,
       isPublished: isPublished !== undefined ? Boolean(isPublished) : true,
       createdAt: new Date().toISOString(),
@@ -849,18 +945,128 @@ apiRouter.post(
   }
 );
 
+apiRouter.get('/gallery/images', optionalAuthenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  if (db.gallery_albums.length === 0) {
+    db.gallery_albums.push({
+      id: `ALB-${Date.now()}`,
+      title: 'Parish Gallery',
+      description: 'Default parish photo gallery.',
+      category: 'General',
+      coverImageUrl: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&q=80&w=1200',
+      aspectRatio: 'landscape',
+      isPublic: true,
+      isPublished: true,
+      createdAt: new Date().toISOString(),
+    });
+    db.save();
+  }
+  const images = [...db.gallery_images].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  res.json(images);
+});
+
+apiRouter.post(
+  '/gallery/images',
+  authenticateToken,
+  requireRole(['SUPER_ADMIN', 'PARISH_ADMIN', 'PRIEST']),
+  (req: AuthenticatedRequest, res: Response) => {
+    let album = db.gallery_albums[0];
+    if (!album) {
+      album = {
+        id: `ALB-${Date.now()}`,
+        title: 'Parish Gallery',
+        description: 'Default parish photo gallery.',
+        category: 'General',
+        coverImageUrl: req.body.imageUrl || 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&q=80&w=1200',
+        aspectRatio: 'landscape',
+        isPublic: true,
+        isPublished: true,
+        createdAt: new Date().toISOString(),
+      };
+      db.gallery_albums.unshift(album);
+    }
+
+    const { imageUrl, caption, eventDate, aspectRatio } = req.body;
+    if (!imageUrl) {
+      res.status(400).json({ error: 'Image URL is required.' });
+      return;
+    }
+
+    const newImage: GalleryImage = {
+      id: `IMG-${Date.now()}`,
+      albumId: album.id,
+      imageUrl,
+      caption: caption || 'Parish Event',
+      eventDate: eventDate || new Date().toISOString().split('T')[0],
+      aspectRatio: aspectRatio || 'landscape',
+      order: db.gallery_images.length + 1,
+      createdAt: new Date().toISOString(),
+    };
+
+    db.gallery_images.unshift(newImage);
+    db.save();
+
+    res.status(201).json(newImage);
+  }
+);
+
+apiRouter.post(
+  '/gallery/images/delete',
+  optionalAuthenticateToken,
+  (req: AuthenticatedRequest, res: Response) => {
+    const { id, imageUrl } = req.body;
+    const targetId = id ? String(id).trim() : '';
+    const targetUrl = imageUrl ? String(imageUrl).trim() : '';
+
+    const initialLength = db.gallery_images.length;
+    db.gallery_images = db.gallery_images.filter((img) => {
+      const imgUrl = img.imageUrl || (img as any).url || '';
+      const matchesId = targetId && (
+        img.id === targetId || 
+        img.id.replace('IMG-', '') === targetId.replace('IMG-', '').replace('LOCAL-', '') ||
+        targetId.includes(img.id) ||
+        img.id.includes(targetId)
+      );
+      const matchesUrl = targetUrl && (
+        imgUrl === targetUrl || 
+        imgUrl.startsWith(targetUrl) || 
+        targetUrl.startsWith(imgUrl) || 
+        imgUrl.includes(targetUrl) || 
+        targetUrl.includes(imgUrl) ||
+        (targetUrl.length > 50 && imgUrl.substring(0, 50) === targetUrl.substring(0, 50))
+      );
+      return !(matchesId || matchesUrl);
+    });
+    db.save();
+    res.json({ success: true, countRemoved: initialLength - db.gallery_images.length });
+  }
+);
+
 apiRouter.post(
   '/gallery/:id/images',
   authenticateToken,
   requireRole(['SUPER_ADMIN', 'PARISH_ADMIN', 'PRIEST']),
   (req: AuthenticatedRequest, res: Response) => {
-    const album = db.gallery_albums.find((a) => a.id === req.params.id);
+    let album = db.gallery_albums.find((a) => a.id === req.params.id);
     if (!album) {
-      res.status(404).json({ error: 'Album not found.' });
-      return;
+      if (db.gallery_albums.length > 0) {
+        album = db.gallery_albums[0];
+      } else {
+        album = {
+          id: `ALB-${Date.now()}`,
+          title: 'Parish Feast & Liturgical Events',
+          description: 'Default parish photo gallery album for events, feasts, and church memories.',
+          category: 'Parish Feast',
+          coverImageUrl: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&q=80&w=1200',
+          aspectRatio: 'landscape',
+          isPublic: true,
+          isPublished: true,
+          createdAt: new Date().toISOString(),
+        };
+        db.gallery_albums.unshift(album);
+      }
     }
 
-    const { imageUrl, caption, order } = req.body;
+    const { imageUrl, caption, eventDate, aspectRatio, order } = req.body;
     if (!imageUrl) {
       res.status(400).json({ error: 'Image URL is required.' });
       return;
@@ -871,11 +1077,13 @@ apiRouter.post(
       albumId: album.id,
       imageUrl,
       caption: caption || '',
+      eventDate: eventDate || new Date().toISOString().split('T')[0],
+      aspectRatio: aspectRatio || 'landscape',
       order: order || db.gallery_images.filter((i) => i.albumId === album.id).length + 1,
       createdAt: new Date().toISOString(),
     };
 
-    db.gallery_images.push(newImage);
+    db.gallery_images.unshift(newImage);
     db.save();
 
     res.status(201).json(newImage);

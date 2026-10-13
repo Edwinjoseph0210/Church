@@ -18,6 +18,7 @@ import {
   FileText,
   Megaphone,
   Calendar,
+  Image as ImageIcon,
   Settings as SettingsIcon,
 } from 'lucide-react';
 import churchLogo from '../../assets/church_logo.svg';
@@ -83,6 +84,11 @@ export const PriestLayout: React.FC<PriestLayoutProps> = ({
       label: 'Parish Documents',
       path: '/admin/documents',
       icon: FileText,
+    },
+    {
+      label: 'Photo Gallery',
+      path: '/admin/gallery',
+      icon: ImageIcon,
     },
     {
       label: 'Parish Settings',

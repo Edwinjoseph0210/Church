@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../context/SettingsContext';
 import { apiRequest } from '../../services/api';
-import { HolyQurbanaTiming, Announcement, ParishEvent, Organization, GalleryAlbum } from '../../types';
+import { HolyQurbanaTiming, Announcement, ParishEvent, Organization, GalleryImage } from '../../types';
 import {
   Calendar,
   Clock,
@@ -29,24 +29,44 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [events, setEvents] = useState<ParishEvent[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadHomeData() {
       try {
-        const [timingsRes, annRes, evtRes, orgRes, albRes] = await Promise.all([
-          apiRequest<HolyQurbanaTiming[]>('/holy-qurbana'),
-          apiRequest<Announcement[]>('/announcements'),
-          apiRequest<ParishEvent[]>('/events'),
-          apiRequest<Organization[]>('/organizations'),
-          apiRequest<GalleryAlbum[]>('/gallery'),
+        const [timingsRes, annRes, evtRes, orgRes, serverImgs] = await Promise.all([
+          apiRequest<HolyQurbanaTiming[]>('/holy-qurbana').catch(() => []),
+          apiRequest<Announcement[]>('/announcements').catch(() => []),
+          apiRequest<ParishEvent[]>('/events').catch(() => []),
+          apiRequest<Organization[]>('/organizations').catch(() => []),
+          apiRequest<GalleryImage[]>('/gallery/images').catch(() => []),
         ]);
-        setTimings(timingsRes.slice(0, 4));
-        setAnnouncements(annRes.slice(0, 3));
-        setEvents(evtRes.slice(0, 3));
-        setOrganizations(orgRes.slice(0, 6));
-        setAlbums(albRes.slice(0, 3));
+        const localImgs = JSON.parse(localStorage.getItem('parish_gallery_uploads') || '[]');
+        const deletedIds = JSON.parse(localStorage.getItem('parish_gallery_deleted_ids') || '[]');
+        const combinedImgs = [...localImgs, ...(Array.isArray(serverImgs) ? serverImgs : [])];
+
+        const filtered = combinedImgs.filter((img: any) => {
+          if (!img) return false;
+          const url = img.imageUrl || img.url;
+          const id = img.id;
+          return !deletedIds.includes(id) && !deletedIds.includes(url);
+        });
+
+        const normalized = filtered.map((img, index) => ({
+          ...img,
+          id: img.id || `IMG-GEN-${index}`,
+          caption: img.caption || 'Parish Community Photo',
+          eventDate: img.eventDate || new Date().toISOString().split('T')[0],
+          aspectRatio: img.aspectRatio || 'landscape',
+        }));
+        const uniqueImgs = Array.from(new Map(normalized.map(item => [item.id || item.imageUrl, item])).values());
+
+        setTimings(Array.isArray(timingsRes) ? timingsRes.slice(0, 4) : []);
+        setAnnouncements(Array.isArray(annRes) ? annRes.slice(0, 3) : []);
+        setEvents(Array.isArray(evtRes) ? evtRes.slice(0, 3) : []);
+        setOrganizations(Array.isArray(orgRes) ? orgRes.slice(0, 6) : []);
+        setGalleryImages(uniqueImgs.slice(0, 6));
       } catch (err) {
         console.error('Failed to load homepage data:', err);
       } finally {
@@ -72,7 +92,8 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   ];
 
   const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
-  const heroImage = rotatingHeroImages[dayOfYear % rotatingHeroImages.length];
+  const defaultRotatingImage = rotatingHeroImages[dayOfYear % rotatingHeroImages.length];
+  const heroImage = settings?.heroImageUrl || defaultRotatingImage;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -385,15 +406,15 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                   onClick={() => navigate(`/announcements`)}
                   className="bg-white rounded-xl border border-stone-200/90 shadow-xs hover:shadow-md transition-all overflow-hidden cursor-pointer flex flex-col justify-between"
                 >
-                  {ann.imageUrl && (
-                    <div className="h-44 overflow-hidden bg-stone-100">
-                      <img
-                        src={ann.imageUrl}
-                        alt={ann.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  )}
+                  <div className="h-44 overflow-hidden bg-stone-100">
+                    <img
+                      src={ann.imageUrl || '/images/hero_church_facade_1790490137085.jpg'}
+                      alt={ann.title}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/images/hero_church_facade_1790490137085.jpg'; }}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center gap-2 text-xs text-stone-500 mb-3">
@@ -457,16 +478,15 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                 onClick={() => navigate(`/events`)}
                 className="bg-white rounded-xl border border-stone-200/90 shadow-xs overflow-hidden hover:shadow-md transition-all cursor-pointer"
               >
-                {evt.imageUrl && (
-                  <div className="h-44 overflow-hidden bg-stone-200">
-                    <img
-                      src={evt.imageUrl}
-                      alt={evt.title}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                )}
+                <div className="h-44 overflow-hidden bg-stone-200">
+                  <img
+                    src={evt.imageUrl || '/images/holy_qurbana_altar_1790490159004.jpg'}
+                    alt={evt.title}
+                    referrerPolicy="no-referrer"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/holy_qurbana_altar_1790490159004.jpg'; }}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 text-xs text-amber-900 font-semibold mb-2">
                     <Calendar className="w-3.5 h-3.5" />
@@ -543,36 +563,37 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
               onClick={() => navigate('/gallery')}
               className="mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-semibold text-amber-900 hover:text-amber-700"
             >
-              <span>Explore All Albums</span>
+              <span>Explore All Photos</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {albums.map((album) => (
-              <div
-                key={album.id}
-                onClick={() => navigate('/gallery')}
-                className="group relative rounded-xl overflow-hidden shadow-xs border border-stone-200 bg-stone-900 cursor-pointer aspect-4/3"
-              >
-                <img
-                  src={album.coverImageUrl}
-                  alt={album.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-85"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-6 flex flex-col justify-end">
-                  <span className="text-[10px] uppercase tracking-wider text-amber-300 font-semibold">
-                    {album.category}
-                  </span>
-                  <h3 className="font-serif text-lg font-bold text-white mb-1">
-                    {album.title}
-                  </h3>
-                  <p className="text-xs text-stone-300 line-clamp-1 font-editorial">
-                    {album.description}
-                  </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {galleryImages.map((img) => (
+                <div
+                  key={img.id}
+                  onClick={() => navigate('/gallery')}
+                  className="group relative rounded-xl overflow-hidden shadow-xs border border-stone-200 bg-stone-900 cursor-pointer aspect-4/3"
+                >
+                  <img
+                    src={img.imageUrl}
+                    alt={img.caption || 'Parish photograph'}
+                    referrerPolicy="no-referrer"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/holy_qurbana_altar_1790490159004.jpg'; }}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/30 to-transparent p-5 flex flex-col justify-end">
+                    {img.eventDate && (
+                      <span className="text-[10px] text-amber-300 font-mono mb-1 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {img.eventDate}
+                      </span>
+                    )}
+                    <h3 className="font-serif text-sm font-bold text-white line-clamp-1 leading-snug">
+                      {img.caption || 'Parish Event'}
+                    </h3>
+                  </div>
                 </div>
-              </div>
             ))}
           </div>
         </div>

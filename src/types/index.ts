@@ -187,6 +187,7 @@ export interface GalleryAlbum {
   description: string;
   category: string;
   coverImageUrl: string;
+  aspectRatio?: string; // 'square' | 'portrait' | 'landscape' | 'natural'
   isPublic: boolean;
   isPublished: boolean;
   createdAt: string;
@@ -199,6 +200,8 @@ export interface GalleryImage {
   albumId: string;
   imageUrl: string;
   caption: string;
+  eventDate?: string;
+  aspectRatio?: string; // 'square' | 'portrait' | 'landscape' | 'natural'
   order: number;
   createdAt: string;
 }

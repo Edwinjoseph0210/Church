@@ -46,6 +46,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, navigate,
         { label: 'Overview', path: '/admin/dashboard', icon: LayoutDashboard },
         ...(!isCoordinatorOnly
           ? [
+              { label: 'Photo Gallery & Uploads', path: '/admin/gallery', icon: ImageIcon },
               { label: 'Members', path: '/admin/members', icon: Users },
               { label: 'Families', path: '/admin/families', icon: Home },
               { label: 'Holy Qurbana', path: '/admin/holy-qurbana', icon: Clock },
@@ -55,7 +56,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, navigate,
         { label: 'Events', path: '/admin/events', icon: Calendar },
         ...(!isCoordinatorOnly
           ? [
-              { label: 'Gallery', path: '/admin/gallery', icon: ImageIcon },
               { label: 'Documents', path: '/admin/documents', icon: FileText },
             ]
           : []),

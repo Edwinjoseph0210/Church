@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Shield,
   Activity,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface AdminDashboardPageProps {
@@ -164,6 +165,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate
           Quick Administrative Actions
         </h2>
         <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => navigate('/admin/gallery')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+          >
+            <ImageIcon className="w-3.5 h-3.5" />
+            <span>Manage Photo Gallery & Uploads</span>
+          </button>
           <button
             onClick={() => navigate('/admin/holy-qurbana')}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-900 hover:bg-amber-950 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"

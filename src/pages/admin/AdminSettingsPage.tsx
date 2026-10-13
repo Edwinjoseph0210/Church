@@ -1,6 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../context/SettingsContext';
-import { Settings, Save, CheckCircle2, AlertCircle, Church } from 'lucide-react';
+import { apiRequest } from '../../services/api';
+import { GalleryAlbum, GalleryImage } from '../../types';
+import { Settings, Save, CheckCircle2, AlertCircle, Church, ImagePlus, Upload, Calendar, Image as ImageIcon, Camera, Trash2 } from 'lucide-react';
+
+const churchBackgroundOptions = [
+  {
+    url: '/images/holy_qurbana_altar_1790490159004.jpg',
+    title: 'Holy Qurbana Altar & Sanctuary',
+    category: 'Interior Sanctuary',
+  },
+  {
+    url: '/images/hero_church_facade_1790490137085.jpg',
+    title: 'St. Mariam Thresia Church Facade',
+    category: 'Outdoor Architecture',
+  },
+  {
+    url: '/images/parish_community_gathering_1790490173737.jpg',
+    title: 'Parish Community Gathering',
+    category: 'Community & Fellowship',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&w=1600&q=85',
+    title: 'Classic Cathedral Sanctuary',
+    category: 'Church Interior',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1548625361-1ac6eb663528?auto=format&fit=crop&w=1600&q=85',
+    title: 'Golden Tabernacle & Altar',
+    category: 'Altar Adoration',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1600&q=85',
+    title: 'Stained Glass Apostles & Christ',
+    category: 'Stained Glass Art',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1600&q=85',
+    title: 'Votive Prayer Candles & Shrine',
+    category: 'Prayer Shrine',
+  },
+];
 
 export const AdminSettingsPage: React.FC = () => {
   const { settings, updateSettings } = useSettings();
@@ -24,6 +64,9 @@ export const AdminSettingsPage: React.FC = () => {
 
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [showImagePicker, setShowImagePicker] = useState(false);
+
+
 
   useEffect(() => {
     if (settings) {
@@ -83,6 +126,8 @@ export const AdminSettingsPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6 text-xs">
+
+
         {/* Core Church Identity */}
         <div className="p-5 bg-stone-50 rounded-xl border border-stone-200/80 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-stone-200">
@@ -242,28 +287,7 @@ export const AdminSettingsPage: React.FC = () => {
             />
           </div>
 
-          <div>
-            <label className="block font-semibold text-stone-700 mb-1">
-              Hero Section Background Image URL
-            </label>
-            <input
-              type="text"
-              value={formData.heroImageUrl}
-              onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
-              placeholder="/images/... or public image URL"
-              className="w-full px-3 py-2 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-amber-800 font-mono text-xs"
-            />
-            {formData.heroImageUrl && (
-              <div className="mt-2 relative w-48 h-24 rounded-lg overflow-hidden border border-stone-200 shadow-xs">
-                <img
-                  src={formData.heroImageUrl}
-                  alt="Hero Preview"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-          </div>
+
 
           <div>
             <label className="block font-semibold text-stone-700 mb-1">
@@ -314,6 +338,7 @@ export const AdminSettingsPage: React.FC = () => {
           </button>
         </div>
       </form>
+
     </div>
   );
 };

@@ -64,16 +64,15 @@ export const EventsPage: React.FC<EventsPageProps> = ({ navigate, selectedId }) 
                 className="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
               >
                 <div>
-                  {evt.imageUrl && (
-                    <div className="h-48 overflow-hidden bg-stone-100">
-                      <img
-                        src={evt.imageUrl}
-                        alt={evt.title}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  )}
+                  <div className="h-48 overflow-hidden bg-stone-100">
+                    <img
+                      src={evt.imageUrl || '/images/holy_qurbana_altar_1790490159004.jpg'}
+                      alt={evt.title}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/images/holy_qurbana_altar_1790490159004.jpg'; }}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
 
                   <div className="p-6">
                     <div className="flex items-center justify-between text-xs text-stone-500 mb-3">

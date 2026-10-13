@@ -35,6 +35,7 @@ import { AdminDocumentsPage } from './pages/admin/AdminDocumentsPage';
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
 import { AdminAnnouncementsPage } from './pages/admin/AdminAnnouncementsPage';
 import { AdminEventsPage } from './pages/admin/AdminEventsPage';
+import { AdminGalleryPage } from './pages/admin/AdminGalleryPage';
 
 import { ShieldAlert, ArrowLeft, LogIn } from 'lucide-react';
 
@@ -198,6 +199,14 @@ function AppContent() {
       return (
         <PriestLayout currentPath="/admin/settings" navigate={navigate}>
           <AdminSettingsPage />
+        </PriestLayout>
+      );
+    }
+
+    if (currentPath === '/admin/gallery' || currentPath === '/priest/gallery') {
+      return (
+        <PriestLayout currentPath="/admin/gallery" navigate={navigate}>
+          <AdminGalleryPage />
         </PriestLayout>
       );
     }

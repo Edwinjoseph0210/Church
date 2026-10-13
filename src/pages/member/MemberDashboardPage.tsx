@@ -37,11 +37,11 @@ export const MemberDashboardPage: React.FC<MemberDashboardPageProps> = ({ naviga
           }
         }
         const [annRes, evtRes] = await Promise.all([
-          apiRequest<Announcement[]>('/announcements'),
-          apiRequest<ParishEvent[]>('/events'),
+          apiRequest<Announcement[]>('/announcements').catch(() => []),
+          apiRequest<ParishEvent[]>('/events').catch(() => []),
         ]);
-        setAnnouncements(annRes.slice(0, 3));
-        setEvents(evtRes.slice(0, 2));
+        setAnnouncements(Array.isArray(annRes) ? annRes.slice(0, 3) : []);
+        setEvents(Array.isArray(evtRes) ? evtRes.slice(0, 2) : []);
       } catch (err) {
         console.error('Error loading member dashboard:', err);
       } finally {
